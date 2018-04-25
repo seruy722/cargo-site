@@ -19,10 +19,7 @@ class CargoResource extends Resource
             'created_at' => $this->created_at,
             'type' => $this->type,
             'price' => $this->price,
-            'client'=>[
-                'client_id'=>$this->client_id,
-                'client_name' => optional($this->client)->name,
-            ],
+            'client_name' => optional($this->client)->name,
             'count_place' => $this->count_place,
             'kg' => $this->kg,
             'fax_name' => $this->fax_name,

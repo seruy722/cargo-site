@@ -46563,13 +46563,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       table: "cargos",
       posts: "",
+      clients: [],
       url: "http://cargo.site/",
       search: {
         keyword: "",
@@ -46579,8 +46579,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         price: 0,
         countPlace: 0,
         kg: 0,
-        commission: 0,
-        clients: []
+        commission: 0
       },
       excel: {
         json_fields: {},
@@ -46598,6 +46597,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     Axios.get(this.url + "api/cargos").then(function (response) {
       var data = response.data;
       _this.posts = data.data;
+    });
+    Axios.get(this.url + "api/clients").then(function (response) {
+      var data = response.data;
+      _this.clients = data.data;
     });
   },
   computed: {
@@ -46636,7 +46639,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       if (yy < 10) yy = "0" + yy;
       return dd + "." + mm + "." + yy;
     },
-    fetch: function fetch() {
+    fetchSearch: function fetchSearch() {
       var _this3 = this;
 
       if (this.table === "cargos") {
@@ -46762,7 +46765,7 @@ var render = function() {
         domProps: { value: _vm.search.date1 },
         on: {
           change: function($event) {
-            _vm.fetch()
+            _vm.fetchSearch()
           },
           input: function($event) {
             if ($event.target.composing) {
@@ -46786,7 +46789,7 @@ var render = function() {
         domProps: { value: _vm.search.date2 },
         on: {
           change: function($event) {
-            _vm.fetch()
+            _vm.fetchSearch()
           },
           input: function($event) {
             if ($event.target.composing) {
@@ -46837,7 +46840,7 @@ var render = function() {
                 )
               },
               function($event) {
-                _vm.fetch()
+                _vm.fetchSearch()
               }
             ]
           }
@@ -46849,15 +46852,15 @@ var render = function() {
             [_vm._v("Все")]
           ),
           _vm._v(" "),
-          _vm._l(_vm.search.clients, function(client, index) {
+          _vm._l(_vm.clients, function(client, index) {
             return _c(
               "option",
               {
                 key: index,
                 staticClass: "list-group-item",
-                domProps: { value: client.client_id }
+                domProps: { value: client.id }
               },
-              [_vm._v(_vm._s(client.client_name))]
+              [_vm._v(_vm._s(client.name))]
             )
           })
         ],
@@ -46892,7 +46895,7 @@ var render = function() {
                   : $$selectedVal[0]
               },
               function($event) {
-                _vm.fetch()
+                _vm.fetchSearch()
               }
             ]
           }
@@ -46937,14 +46940,8 @@ var render = function() {
                   [
                     _c("td", [_vm._v(_vm._s(i + 1))]),
                     _vm._v(" "),
-                    post.created_at.date
-                      ? _c("td", [
-                          _vm._v(_vm._s(_vm.formatDate(post.created_at.date)))
-                        ])
-                      : _vm._e(),
-                    _vm._v(" "),
                     _vm._l(post, function(element, index) {
-                      return index != "id" && index != "created_at"
+                      return index != "id"
                         ? _c("td", { key: element.id }, [
                             _vm._v(_vm._s(element))
                           ])

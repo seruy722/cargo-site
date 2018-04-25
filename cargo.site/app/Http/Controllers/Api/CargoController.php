@@ -36,8 +36,6 @@ class CargoController extends Controller
         }else{
             $data = Cargo::all();
         }
-        
-        // dd($data);
         return CargoResource::collection($data);
 
     }

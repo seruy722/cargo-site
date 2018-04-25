@@ -21,15 +21,15 @@
         </div>
         <div>
             <label for="date1">Дата</label>
-            <input type="date" @change="fetch()" v-model="search.date1">
-            <input type="date" @change="fetch()" v-model="search.date2">
+            <input type="date" @change="fetchSearch()" v-model="search.date1">
+            <input type="date" @change="fetchSearch()" v-model="search.date2">
 
             <input type="text" @keyup="change()" class="glyphicon glyphicon-search" placeholder="Введите первый символ">
-            <select class="list-group" v-model="search.keyword"  @change="fetch()">
+            <select class="list-group" v-model="search.keyword"  @change="fetchSearch()">
                 <option class="list-group-item" value="">Все</option>
-                <option class="list-group-item" v-for="(client,index) in search.clients" :key="index" v-bind:value="client.client_id">{{client.client_name}}</option>
+                <option class="list-group-item" v-for="(client,index) in clients" :key="index" v-bind:value="client.id">{{client.name}}</option>
             </select>
-            <select class="list-group" v-model="table" @change="fetch()">
+            <select class="list-group" v-model="table" @change="fetchSearch()">
                 <option value="cargos">КАРГО</option>
                 <option value="debts">ДОЛГИ</option>
             </select>
@@ -58,8 +58,7 @@
                 <tbody>
                     <tr v-for="(post, i) in filteredPosts" :key="post.id" v-bind:class="{'danger':post.type=='Долг','success':post.type=='Оплата'}">
                         <td>{{i + 1}}</td>
-                        <td v-if="post.created_at.date">{{formatDate(post.created_at.date)}}</td>
-                        <td v-for="(element,index) in post" :key="element.id" v-if="index!='id' && index!='created_at'">{{element}}</td>
+                        <td v-for="(element,index) in post" :key="element.id" v-if="index!='id'">{{element}}</td>
                         <td>
                 <router-link class="btn btn-sm btn-warning" v-bind:to="{name:'Editpost',params:{id:post.id}}">Редактировать</router-link>
                 <router-link class="btn btn-sm btn-danger" v-bind:to="{name:'Deletepost',params:{id:post.id}}">Удалить</router-link>
@@ -116,6 +115,7 @@ export default {
     return {
       table: "cargos",
       posts: "",
+      clients: [],
       url: "http://cargo.site/",
       search: {
         keyword: "",
@@ -125,8 +125,7 @@ export default {
         price: 0,
         countPlace: 0,
         kg: 0,
-        commission: 0,
-        clients: []
+        commission: 0
       },
       excel: {
         json_fields: {},
@@ -146,6 +145,10 @@ export default {
     Axios.get(this.url + "api/cargos").then(response => {
       let data = response.data;
       this.posts = data.data;
+    });
+    Axios.get(this.url + "api/clients").then(response => {
+      let data = response.data;
+      this.clients = data.data;
     });
   },
   computed: {
@@ -182,7 +185,7 @@ export default {
       if (yy < 10) yy = "0" + yy;
       return dd + "." + mm + "." + yy;
     },
-    fetch() {
+    fetchSearch() {
       if (this.table === "cargos") {
         Axios.post(this.url + "api/search", {
           keyword: this.search.keyword,
