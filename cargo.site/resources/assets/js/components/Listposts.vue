@@ -13,7 +13,7 @@
                 class   = "btn btn-success"
                 :data   = 'excel.excelData'
                 :fields = "excel.json_fields"
-                name  = "filename.xls">
+                :name  = "search.keyword">
                Excel
             </download-excel>
             <br><br>
@@ -87,14 +87,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(post, index) in filteredPosts" :key="post.id" v-bind:class="{'danger':post.type=='Долг','success':post.type=='Оплата'}">
-                        <td>{{index + 1}}</td>
-                        <td>{{formatDate(post.created_at)}}</td>
-                        <td>{{post.type}}</td>
-                        <td>{{post.price}}</td>
-                        <td>{{post.client_id}}</td>
-                        <td>{{post.commission}}</td>
-                        <td>{{post.notation}}</td>
+                    <tr v-for="(post, i) in filteredPosts" :key="post.id" v-bind:class="{'danger':post.type=='Долг','success':post.type=='Оплата'}">
+                        <td>{{i + 1}}</td>
+                        <td v-for="(element,index) in post" :key="element.id" v-if="index!='id'">{{element}}</td>
                         <td>
                 <router-link class="btn btn-sm btn-warning" v-bind:to="{name:'Editpost',params:{id:post.id}}">Редактировать</router-link>
                 <router-link class="btn btn-sm btn-danger" v-bind:to="{name:'Deletepost',params:{id:post.id}}">Удалить</router-link>
@@ -114,7 +109,7 @@ export default {
   data: function() {
     return {
       table: "cargos",
-      posts: "",
+      posts: [],
       clients: [],
       url: "http://cargo.site/",
       search: {
@@ -158,20 +153,20 @@ export default {
         this.search.countPlace = 0;
         this.search.kg = 0;
         this.search.commission = 0;
-        this.search.clients = [];
+        let arr = [];
         this.posts.forEach(element => {
           this.search.price += element["price"];
           this.search.countPlace += element["count_place"];
           this.search.kg += element["kg"];
           this.search.commission += element["commission"];
-          this.search.clients.push(element["client"]);
+          let elem = element;
+          elem.created_at = this.formatDate(elem.created_at.date);
+          arr.push(elem);
         });
-        this.search.clients = this.search.clients.filter(
-          (value, index, arr) => arr.indexOf(value) === index
-        );
-        this.sendToExcel();
+        this.posts = arr;
         return this.posts;
       }
+      this.prepareDataToExcel();
     }
   },
   methods: {
@@ -197,28 +192,26 @@ export default {
           this.posts = data.data;
         });
       }
-      this.sendToExcel();
+      this.prepareDataToExcel();
     },
-    sendToExcel() {
+    prepareDataToExcel() {
       this.excel.excelData = [];
       if (this.table === "cargos") {
         this.excel.json_fields = {
           Дата: "created_at",
           Тип: "type",
           Сумма: "price",
-          Пользователь: "client_id",
+          Пользователь: "client_name",
           Мест: "count_place",
           Вес: "kg",
           Факс: "fax_name",
           Примечания: "notation"
         };
       }
-      this.posts.forEach(element => {
-        this.excel.excelData.push(element);
-      });
+      this.excel.excelData = this.posts;
     },
     change() {
-      console.log(this.search.clients);
+      console.log(this.excel.excelData);
     }
   }
 };

@@ -46558,17 +46558,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       table: "cargos",
-      posts: "",
+      posts: [],
       clients: [],
       url: "http://cargo.site/",
       search: {
@@ -46612,20 +46607,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         this.search.countPlace = 0;
         this.search.kg = 0;
         this.search.commission = 0;
-        this.search.clients = [];
+        var arr = [];
         this.posts.forEach(function (element) {
           _this2.search.price += element["price"];
           _this2.search.countPlace += element["count_place"];
           _this2.search.kg += element["kg"];
           _this2.search.commission += element["commission"];
-          _this2.search.clients.push(element["client"]);
+          var elem = element;
+          elem.created_at = _this2.formatDate(elem.created_at.date);
+          arr.push(elem);
         });
-        this.search.clients = this.search.clients.filter(function (value, index, arr) {
-          return arr.indexOf(value) === index;
-        });
-        this.sendToExcel();
+        this.posts = arr;
         return this.posts;
       }
+      this.prepareDataToExcel();
     }
   },
   methods: {
@@ -46653,30 +46648,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           _this3.posts = data.data;
         });
       }
-      this.sendToExcel();
+      this.prepareDataToExcel();
     },
-    sendToExcel: function sendToExcel() {
-      var _this4 = this;
-
+    prepareDataToExcel: function prepareDataToExcel() {
       this.excel.excelData = [];
       if (this.table === "cargos") {
         this.excel.json_fields = {
           Дата: "created_at",
           Тип: "type",
           Сумма: "price",
-          Пользователь: "client_id",
+          Пользователь: "client_name",
           Мест: "count_place",
           Вес: "kg",
           Факс: "fax_name",
           Примечания: "notation"
         };
       }
-      this.posts.forEach(function (element) {
-        _this4.excel.excelData.push(element);
-      });
+      this.excel.excelData = this.posts;
     },
     change: function change() {
-      console.log(this.search.clients);
+      console.log(this.excel.excelData);
     }
   }
 });
@@ -46725,7 +46716,7 @@ var render = function() {
             attrs: {
               data: _vm.excel.excelData,
               fields: _vm.excel.json_fields,
-              name: "filename.xls"
+              name: _vm.search.keyword
             }
           },
           [_vm._v("\n           Excel\n        ")]
@@ -47006,7 +46997,7 @@ var render = function() {
             _vm._v(" "),
             _c(
               "tbody",
-              _vm._l(_vm.filteredPosts, function(post, index) {
+              _vm._l(_vm.filteredPosts, function(post, i) {
                 return _c(
                   "tr",
                   {
@@ -47017,19 +47008,15 @@ var render = function() {
                     }
                   },
                   [
-                    _c("td", [_vm._v(_vm._s(index + 1))]),
+                    _c("td", [_vm._v(_vm._s(i + 1))]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(_vm.formatDate(post.created_at)))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(post.type))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(post.price))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(post.client_id))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(post.commission))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(post.notation))]),
+                    _vm._l(post, function(element, index) {
+                      return index != "id"
+                        ? _c("td", { key: element.id }, [
+                            _vm._v(_vm._s(element))
+                          ])
+                        : _vm._e()
+                    }),
                     _vm._v(" "),
                     _c(
                       "td",
@@ -47061,7 +47048,8 @@ var render = function() {
                       ],
                       1
                     )
-                  ]
+                  ],
+                  2
                 )
               })
             )
