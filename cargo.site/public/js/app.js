@@ -46558,6 +46558,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -46667,7 +46668,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.excel.excelData = this.posts;
     },
     change: function change() {
-      console.log(this.excel.excelData);
+      console.log(this.clients);
     }
   }
 });
@@ -46791,19 +46792,8 @@ var render = function() {
         }
       }),
       _vm._v(" "),
-      _c("input", {
-        staticClass: "glyphicon glyphicon-search",
-        attrs: { type: "text", placeholder: "Введите первый символ" },
-        on: {
-          keyup: function($event) {
-            _vm.change()
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c(
-        "select",
-        {
+      _c("div", [
+        _c("input", {
           directives: [
             {
               name: "model",
@@ -46812,51 +46802,38 @@ var render = function() {
               expression: "search.keyword"
             }
           ],
-          staticClass: "list-group",
+          attrs: { list: "clien" },
+          domProps: { value: _vm.search.keyword },
           on: {
-            change: [
-              function($event) {
-                var $$selectedVal = Array.prototype.filter
-                  .call($event.target.options, function(o) {
-                    return o.selected
-                  })
-                  .map(function(o) {
-                    var val = "_value" in o ? o._value : o.value
-                    return val
-                  })
-                _vm.$set(
-                  _vm.search,
-                  "keyword",
-                  $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-                )
-              },
-              function($event) {
-                _vm.fetchSearch()
+            change: function($event) {
+              _vm.fetchSearch()
+            },
+            input: function($event) {
+              if ($event.target.composing) {
+                return
               }
-            ]
+              _vm.$set(_vm.search, "keyword", $event.target.value)
+            }
           }
-        },
-        [
-          _c(
-            "option",
-            { staticClass: "list-group-item", attrs: { value: "" } },
-            [_vm._v("Все")]
-          ),
-          _vm._v(" "),
-          _vm._l(_vm.clients, function(client, index) {
-            return _c(
-              "option",
-              {
-                key: index,
-                staticClass: "list-group-item",
-                domProps: { value: client.id }
-              },
-              [_vm._v(_vm._s(client.name))]
-            )
-          })
-        ],
-        2
-      ),
+        }),
+        _vm._v(" "),
+        _c(
+          "datalist",
+          { attrs: { id: "clien" } },
+          [
+            _c("option", { attrs: { value: "" } }, [_vm._v("Все")]),
+            _vm._v(" "),
+            _vm._l(_vm.clients, function(client, index) {
+              return _c(
+                "option",
+                { key: index, domProps: { value: client.id } },
+                [_vm._v(_vm._s(client.name))]
+              )
+            })
+          ],
+          2
+        )
+      ]),
       _vm._v(" "),
       _c(
         "select",

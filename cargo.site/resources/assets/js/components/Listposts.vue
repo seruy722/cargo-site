@@ -23,12 +23,13 @@
             <label for="date1">Дата</label>
             <input type="date" @change="fetchSearch()" v-model="search.date1">
             <input type="date" @change="fetchSearch()" v-model="search.date2">
-
-            <input type="text" @keyup="change()" class="glyphicon glyphicon-search" placeholder="Введите первый символ">
-            <select class="list-group" v-model="search.keyword"  @change="fetchSearch()">
-                <option class="list-group-item" value="">Все</option>
-                <option class="list-group-item" v-for="(client,index) in clients" :key="index" v-bind:value="client.id">{{client.name}}</option>
-            </select>
+            <div>
+              <input list="clien" v-model="search.keyword" @change="fetchSearch()">
+              <datalist id="clien">
+                  <option value="">Все</option>
+                  <option v-for="(client,index) in clients" :key="index" v-bind:value="client.id">{{client.name}}</option>
+              </datalist>
+            </div>
             <select class="list-group" v-model="table" @change="fetchSearch()">
                 <option value="cargos">КАРГО</option>
                 <option value="debts">ДОЛГИ</option>
@@ -211,7 +212,7 @@ export default {
       this.excel.excelData = this.posts;
     },
     change() {
-      console.log(this.excel.excelData);
+      console.log(this.clients);
     }
   }
 };
