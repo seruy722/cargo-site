@@ -148,13 +148,11 @@
             };
         },
         created: function () {
-            Axios.get(this.url + "api/cargos").then(response => {
-                let data = response.data;
-                this.posts = data.data;
+            Axios.get(this.url + "api/cargos").then(response => response.data).then(response => {
+                this.posts = response.data;
             });
-            Axios.get(this.url + "api/clients").then(response => {
-                let data = response.data;
-                this.clients = data.data;
+            Axios.get(this.url + "api/clients").then(response => response.data).then(response => {
+                this.clients = response.data;
             });
         },
         computed: {
@@ -181,7 +179,7 @@
             }
         },
         methods: {
-            formatDate: function (date) {
+            formatDate(date) {
                 let data = new Date(date);
                 let dd = data.getDate();
                 if (dd < 10) dd = "0" + dd;
@@ -198,9 +196,8 @@
                         date1: this.search.date1,
                         date2: this.search.date2,
                         table: this.table
-                    }).then(response => {
-                        let data = response.data;
-                        this.posts = data.data;
+                    }).then(response => response.data).then(response => {
+                        this.posts = response.data;
                     });
                 } else {
                     Axios.post(this.url + "api/search/debts", {
@@ -208,9 +205,8 @@
                         date1: this.search.date1,
                         date2: this.search.date2,
                         table: this.table
-                    }).then(response => {
-                        let data = response.data;
-                        this.posts = data.data;
+                    }).then(response => response.data).then(response => {
+                        this.posts = response.data;
                     });
                 }
                 this.prepareDataToExcel();
@@ -228,11 +224,20 @@
                         Факс: "fax_name",
                         Примечания: "notation"
                     };
+                } else {
+                    this.excel.json_fields = {
+                        Дата: "created_at",
+                        Тип: "type",
+                        Сумма: "price",
+                        Пользователь: "client_name",
+                        Комиссия: "commission",
+                        Примечания: "notation"
+                    };
                 }
                 this.excel.excelData = this.posts;
             },
             change() {
-                console.log(this.clients);
+                console.log(this.excel.excelData);
             }
         }
     };
