@@ -16,10 +16,10 @@ class CreateDebtsTable extends Migration
         Schema::create('debts', function (Blueprint $table) {
             $table->increments('id');
             $table->string('type');
-            $table->integer('price');
+            $table->integer('price')->default(0)->nullable();
             $table->integer('client_id')->unsigned();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
-            $table->integer('commission')->nullable();
+            $table->integer('commission')->nullable()->default(0);
             $table->string('notation')->nullable();
             $table->timestamps();
         });

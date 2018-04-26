@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Client;
 use Excel;
+use Illuminate\Http\Request;
+
 class ExcelController extends Controller
 {
     public function getImport(Request $request)

@@ -29,4 +29,6 @@ Route::post('/downloadexcel','ExcelController@saveToExcel');
 
 Route::resource('api/clients','Api\ClientController');
 Route::resource('api/cargos','Api\CargoController');
-Route::post('api/search','Api\CargoController@search');
+Route::resource('api/debts','Api\DebtController');
+Route::post('api/search/cargos','Api\CargoController@search');
+Route::post('api/search/debts','Api\DebtController@search');

@@ -17,35 +17,33 @@ const Editpost = Vue.component('Editpost', require('./components/Editpost.vue'))
 const Viewpost = Vue.component('Viewpost', require('./components/Viewpost.vue'));
 
 
-
-
 Vue.use(VueRouter, VueAxios, axios);
 
 const routes = [
     {
-        name:'Listposts',
-        path:'/',
-        component:Listposts
+        name: 'Listposts',
+        path: '/',
+        component: Listposts
     },
     {
-        name:'Addpost',
-        path:'/add-post',
-        component:Addpost
+        name: 'Addpost',
+        path: '/add-post',
+        component: Addpost
     },
     {
-        name:'Deletepost',
-        path:'/post-delete',
-        component:Deletepost
+        name: 'Deletepost',
+        path: '/post-delete',
+        component: Deletepost
     },
     {
-        name:'Editpost',
-        path:'/edit/:id',
-        component:Editpost
+        name: 'Editpost',
+        path: '/edit/:id',
+        component: Editpost
     },
     {
-        name:'Viewpost',
-        path:'/view/:id',
-        component:Viewpost
+        name: 'Viewpost',
+        path: '/view/:id',
+        component: Viewpost
     }
 ];
 

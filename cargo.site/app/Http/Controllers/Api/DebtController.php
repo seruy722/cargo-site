@@ -1,25 +1,28 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
-use App\Cargo;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\CargoResource;
+use App\Debt;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\DebtResource;
 
-class CargoController extends Controller
+class DebtController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        $cargos = Cargo::get();
-        return CargoResource::collection($cargos);
+        $debts = Debt::get();
+        return DebtResource::collection($debts);
     }
 
     public function show($id)
     {
-        return new CargoResource(Cargo::find($id));
+        return new DebtResource(Debt::find($id));
     }
-
     public function search(Request $request)
     {
         $key = $request->keyword;
@@ -35,14 +38,13 @@ class CargoController extends Controller
         }
 
         if ($key) {
-            $data = Cargo::where('client_id', $key)->whereDate('created_at', '>=', $date1)->whereDate('created_at', '<=', $date2)->get();
+            $data = Debt::where('client_id', $key)->whereDate('created_at', '>=', $date1)->whereDate('created_at', '<=', $date2)->get();
         } else {
-            $data = Cargo::whereDate('created_at', '>=', $date1)->whereDate('created_at', '<=', $date2)->get();
+            $data = Debt::whereDate('created_at', '>=', $date1)->whereDate('created_at', '<=', $date2)->get();
         }
-        return CargoResource::collection($data);
+        return DebtResource::collection($data);
 
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -56,7 +58,7 @@ class CargoController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -64,10 +66,11 @@ class CargoController extends Controller
         //
     }
 
+
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -78,8 +81,8 @@ class CargoController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -90,7 +93,7 @@ class CargoController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

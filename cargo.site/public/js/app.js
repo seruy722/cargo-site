@@ -46559,118 +46559,138 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  data: function data() {
-    return {
-      table: "cargos",
-      posts: [],
-      clients: [],
-      url: "http://cargo.site/",
-      search: {
-        keyword: "",
-        date1: null,
-        date2: null,
-        selected: [],
-        price: 0,
-        countPlace: 0,
-        kg: 0,
-        commission: 0
-      },
-      excel: {
-        json_fields: {},
-        excelData: [],
-        json_meta: [[{
-          key: "charset",
-          value: "utf-8"
-        }]]
-      }
-    };
-  },
-  created: function created() {
-    var _this = this;
-
-    Axios.get(this.url + "api/cargos").then(function (response) {
-      var data = response.data;
-      _this.posts = data.data;
-    });
-    Axios.get(this.url + "api/clients").then(function (response) {
-      var data = response.data;
-      _this.clients = data.data;
-    });
-  },
-  computed: {
-    filteredPosts: function filteredPosts() {
-      var _this2 = this;
-
-      if (this.posts.length) {
-        this.search.price = 0;
-        this.search.countPlace = 0;
-        this.search.kg = 0;
-        this.search.commission = 0;
-        var arr = [];
-        this.posts.forEach(function (element) {
-          _this2.search.price += element["price"];
-          _this2.search.countPlace += element["count_place"];
-          _this2.search.kg += element["kg"];
-          _this2.search.commission += element["commission"];
-          var elem = element;
-          elem.created_at = _this2.formatDate(elem.created_at.date);
-          arr.push(elem);
-        });
-        this.posts = arr;
-        return this.posts;
-      }
-      this.prepareDataToExcel();
-    }
-  },
-  methods: {
-    formatDate: function formatDate(date) {
-      var data = new Date(date);
-      var dd = data.getDate();
-      if (dd < 10) dd = "0" + dd;
-      var mm = data.getMonth() + 1;
-      if (mm < 10) mm = "0" + mm;
-      var yy = data.getFullYear() % 100;
-      if (yy < 10) yy = "0" + yy;
-      return dd + "." + mm + "." + yy;
-    },
-    fetchSearch: function fetchSearch() {
-      var _this3 = this;
-
-      if (this.table === "cargos") {
-        Axios.post(this.url + "api/search", {
-          keyword: this.search.keyword,
-          date1: this.search.date1,
-          date2: this.search.date2,
-          table: this.table
-        }).then(function (response) {
-          var data = response.data;
-          _this3.posts = data.data;
-        });
-      }
-      this.prepareDataToExcel();
-    },
-    prepareDataToExcel: function prepareDataToExcel() {
-      this.excel.excelData = [];
-      if (this.table === "cargos") {
-        this.excel.json_fields = {
-          Дата: "created_at",
-          Тип: "type",
-          Сумма: "price",
-          Пользователь: "client_name",
-          Мест: "count_place",
-          Вес: "kg",
-          Факс: "fax_name",
-          Примечания: "notation"
+    data: function data() {
+        return {
+            table: "cargos",
+            posts: [],
+            clients: [],
+            url: "http://cargo.site/",
+            search: {
+                keyword: "",
+                date1: null,
+                date2: null,
+                selected: [],
+                price: 0,
+                countPlace: 0,
+                kg: 0,
+                commission: 0
+            },
+            excel: {
+                json_fields: {},
+                excelData: [],
+                json_meta: [[{
+                    key: "charset",
+                    value: "utf-8"
+                }]]
+            }
         };
-      }
-      this.excel.excelData = this.posts;
     },
-    change: function change() {
-      console.log(this.clients);
+    created: function created() {
+        var _this = this;
+
+        Axios.get(this.url + "api/cargos").then(function (response) {
+            var data = response.data;
+            _this.posts = data.data;
+        });
+        Axios.get(this.url + "api/clients").then(function (response) {
+            var data = response.data;
+            _this.clients = data.data;
+        });
+    },
+    computed: {
+        filteredPosts: function filteredPosts() {
+            var _this2 = this;
+
+            if (this.posts.length) {
+                this.search.price = 0;
+                this.search.countPlace = 0;
+                this.search.kg = 0;
+                this.search.commission = 0;
+                var arrayForPosts = [];
+                this.posts.forEach(function (element) {
+                    _this2.search.price += element["price"];
+                    _this2.search.countPlace += element["count_place"];
+                    _this2.search.kg += element["kg"];
+                    _this2.search.commission += element["commission"];
+                    var elem = element;
+                    elem.created_at = _this2.formatDate(elem.created_at.date);
+                    arrayForPosts.push(elem);
+                });
+                this.posts = arrayForPosts;
+                return this.posts;
+            }
+            this.prepareDataToExcel();
+        }
+    },
+    methods: {
+        formatDate: function formatDate(date) {
+            var data = new Date(date);
+            var dd = data.getDate();
+            if (dd < 10) dd = "0" + dd;
+            var mm = data.getMonth() + 1;
+            if (mm < 10) mm = "0" + mm;
+            var yy = data.getFullYear() % 100;
+            if (yy < 10) yy = "0" + yy;
+            return dd + "." + mm + "." + yy;
+        },
+        fetchSearch: function fetchSearch() {
+            var _this3 = this;
+
+            if (this.table === "cargos") {
+                Axios.post(this.url + "api/search/cargos", {
+                    keyword: this.search.keyword,
+                    date1: this.search.date1,
+                    date2: this.search.date2,
+                    table: this.table
+                }).then(function (response) {
+                    var data = response.data;
+                    _this3.posts = data.data;
+                });
+            } else {
+                Axios.post(this.url + "api/search/debts", {
+                    keyword: this.search.keyword,
+                    date1: this.search.date1,
+                    date2: this.search.date2,
+                    table: this.table
+                }).then(function (response) {
+                    var data = response.data;
+                    _this3.posts = data.data;
+                });
+            }
+            this.prepareDataToExcel();
+        },
+        prepareDataToExcel: function prepareDataToExcel() {
+            this.excel.excelData = [];
+            if (this.table === "cargos") {
+                this.excel.json_fields = {
+                    Дата: "created_at",
+                    Тип: "type",
+                    Сумма: "price",
+                    Пользователь: "client_name",
+                    Мест: "count_place",
+                    Вес: "kg",
+                    Факс: "fax_name",
+                    Примечания: "notation"
+                };
+            }
+            this.excel.excelData = this.posts;
+        },
+        change: function change() {
+            console.log(this.clients);
+        }
     }
-  }
 });
 
 /***/ }),
@@ -46720,7 +46740,7 @@ var render = function() {
               name: _vm.search.keyword
             }
           },
-          [_vm._v("\n           Excel\n        ")]
+          [_vm._v("\n            Excel\n        ")]
         ),
         _vm._v(" "),
         _c("br"),
@@ -46802,7 +46822,7 @@ var render = function() {
               expression: "search.keyword"
             }
           ],
-          attrs: { list: "clien" },
+          attrs: { list: "client" },
           domProps: { value: _vm.search.keyword },
           on: {
             change: function($event) {
@@ -46819,7 +46839,7 @@ var render = function() {
         _vm._v(" "),
         _c(
           "datalist",
-          { attrs: { id: "clien" } },
+          { attrs: { id: "client" } },
           [
             _c("option", { attrs: { value: "" } }, [_vm._v("Все")]),
             _vm._v(" "),
@@ -46827,7 +46847,7 @@ var render = function() {
               return _c(
                 "option",
                 { key: index, domProps: { value: client.id } },
-                [_vm._v(_vm._s(client.name))]
+                [_vm._v(_vm._s(client.name) + "\n                ")]
               )
             })
           ],
@@ -46927,7 +46947,11 @@ var render = function() {
                               to: { name: "Editpost", params: { id: post.id } }
                             }
                           },
-                          [_vm._v("Редактировать")]
+                          [
+                            _vm._v(
+                              "\n                        Редактировать\n                    "
+                            )
+                          ]
                         ),
                         _vm._v(" "),
                         _c(
@@ -46941,7 +46965,11 @@ var render = function() {
                               }
                             }
                           },
-                          [_vm._v("Удалить")]
+                          [
+                            _vm._v(
+                              "\n                        Удалить\n                    "
+                            )
+                          ]
                         )
                       ],
                       1
@@ -47006,7 +47034,11 @@ var render = function() {
                               to: { name: "Editpost", params: { id: post.id } }
                             }
                           },
-                          [_vm._v("Редактировать")]
+                          [
+                            _vm._v(
+                              "\n                        Редактировать\n                    "
+                            )
+                          ]
                         ),
                         _vm._v(" "),
                         _c(
@@ -47020,7 +47052,11 @@ var render = function() {
                               }
                             }
                           },
-                          [_vm._v("Удалить")]
+                          [
+                            _vm._v(
+                              "\n                        Удалить\n                    "
+                            )
+                          ]
                         )
                       ],
                       1
@@ -47220,79 +47256,85 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  data: function data() {
-    return {
-      keywords: null,
-      posts: "",
-      url: "http://exel.site/",
-      search: {
-        date1: null,
-        date2: null,
-        selected: [],
-        price: 0,
-        countPlace: 0,
-        kg: 0,
-        clients: []
-      }
-    };
-  },
-  created: function created() {
-    var _this = this;
-
-    Axios.get(this.url + "posts/").then(function (response) {
-      _this.posts = response.data;
-    });
-  },
-  computed: {
-    FilteredPosts: function FilteredPosts() {
-      var _this2 = this;
-
-      if (this.posts.length) {
-        this.search.price = 0;
-        this.search.countPlace = 0;
-        this.search.kg = 0;
-        this.search.clients = [];
-        this.posts.forEach(function (element) {
-          _this2.search.price += element["price"];
-          _this2.search.countPlace += element["count_place"];
-          _this2.search.kg += element["kg"];
-          _this2.search.clients.push(element["client_id"]);
-        });
-        this.search.clients = this.search.clients.filter(function (value, index, arr) {
-          return arr.indexOf(value) === index;
-        });
-        return this.posts;
-      }
-    }
-  },
-  methods: {
-    formatDate: function formatDate(date) {
-      var data = new Date(date);
-      var dd = data.getDate();
-      if (dd < 10) dd = "0" + dd;
-      var mm = data.getMonth() + 1;
-      if (mm < 10) mm = "0" + mm;
-      var yy = data.getFullYear() % 100;
-      if (yy < 10) yy = "0" + yy;
-      return dd + "." + mm + "." + yy;
+    data: function data() {
+        return {
+            keywords: null,
+            posts: "",
+            url: "http://exel.site/",
+            search: {
+                date1: null,
+                date2: null,
+                selected: [],
+                price: 0,
+                countPlace: 0,
+                kg: 0,
+                clients: []
+            }
+        };
     },
-    fetch: function fetch() {
-      var _this3 = this;
+    created: function created() {
+        var _this = this;
 
-      Axios.post(this.url + "search", {
-        keywords: this.keywords,
-        date1: this.search.date1,
-        date2: this.search.date2
-      }).then(function (response) {
-        _this3.posts = response.data;
-      });
+        Axios.get(this.url + "posts/").then(function (response) {
+            _this.posts = response.data;
+        });
     },
-    change: function change() {
-      alert(this.search.date1);
+    computed: {
+        FilteredPosts: function FilteredPosts() {
+            var _this2 = this;
+
+            if (this.posts.length) {
+                this.search.price = 0;
+                this.search.countPlace = 0;
+                this.search.kg = 0;
+                this.search.clients = [];
+                this.posts.forEach(function (element) {
+                    _this2.search.price += element["price"];
+                    _this2.search.countPlace += element["count_place"];
+                    _this2.search.kg += element["kg"];
+                    _this2.search.clients.push(element["client_id"]);
+                });
+                this.search.clients = this.search.clients.filter(function (value, index, arr) {
+                    return arr.indexOf(value) === index;
+                });
+                return this.posts;
+            }
+        }
+    },
+    methods: {
+        formatDate: function formatDate(date) {
+            var data = new Date(date);
+            var dd = data.getDate();
+            if (dd < 10) dd = "0" + dd;
+            var mm = data.getMonth() + 1;
+            if (mm < 10) mm = "0" + mm;
+            var yy = data.getFullYear() % 100;
+            if (yy < 10) yy = "0" + yy;
+            return dd + "." + mm + "." + yy;
+        },
+        fetch: function fetch() {
+            var _this3 = this;
+
+            Axios.post(this.url + "search", {
+                keywords: this.keywords,
+                date1: this.search.date1,
+                date2: this.search.date2
+            }).then(function (response) {
+                _this3.posts = response.data;
+            });
+        },
+        change: function change() {
+            alert(this.search.date1);
+        }
     }
-  }
 });
 
 /***/ }),
@@ -47487,9 +47529,9 @@ var render = function() {
     _vm._v(" "),
     _c("div", [
       _c("span", [_vm._v("Сумма: " + _vm._s(_vm.search.price))]),
-      _vm._v("|\n      "),
+      _vm._v("|\n        "),
       _c("span", [_vm._v("Кол. мест: " + _vm._s(_vm.search.countPlace))]),
-      _vm._v("|\n      "),
+      _vm._v("|\n        "),
       _c("span", [_vm._v("Вес: " + _vm._s(_vm.search.kg))])
     ]),
     _vm._v(" "),
@@ -47548,7 +47590,11 @@ var render = function() {
                         to: { name: "Editpost", params: { id: post.id } }
                       }
                     },
-                    [_vm._v("Редактировать")]
+                    [
+                      _vm._v(
+                        "\n                    Редактировать\n                "
+                      )
+                    ]
                   ),
                   _vm._v(" "),
                   _c(
@@ -47559,7 +47605,7 @@ var render = function() {
                         to: { name: "Deletepost", params: { id: post.id } }
                       }
                     },
-                    [_vm._v("Удалить")]
+                    [_vm._v("\n                    Удалить\n                ")]
                   )
                 ],
                 1

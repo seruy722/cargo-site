@@ -16,11 +16,11 @@ class CreateCargosTable extends Migration
         Schema::create('cargos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('type');
-            $table->integer('price');
+            $table->integer('price')->default(0);
             $table->integer('client_id')->unsigned();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
-            $table->integer('count_place')->nullable();
-            $table->integer('kg')->nullable();
+            $table->integer('count_place')->nullable()->default(0);
+            $table->integer('kg')->nullable()->default(0);
             $table->string('fax_name')->nullable();
             $table->string('notation')->nullable();
             $table->timestamps();
