@@ -23,21 +23,21 @@ class CargoController extends Controller
     public function search(Request $request)
     {
         $key = $request->keyword;
-        if ($request->date1) {
-            $date1 = date('Y-m-d', strtotime($request->date1));
+        if ($request->dateStart) {
+            $dateStart = date('Y-m-d', strtotime($request->dateStart));
         } else {
-            $date1 = date('Y-m-d', strtotime('1900-01-01'));
+            $dateStart = date('Y-m-d', strtotime('1900-01-01'));
         }
-        if ($request->date2) {
-            $date2 = date('Y-m-d', strtotime($request->date2));
+        if ($request->dateLast) {
+            $dateLast = date('Y-m-d', strtotime($request->dateLast));
         } else {
-            $date2 = date(now());
+            $dateLast = date(now());
         }
 
-        if ($key) {
-            $data = Cargo::where('client_id', $key)->whereDate('created_at', '>=', $date1)->whereDate('created_at', '<=', $date2)->get();
+        if ($key && $key!=='Все') {
+            $data = Cargo::where('client_id', $key)->whereDate('created_at', '>=', $dateStart)->whereDate('created_at', '<=', $dateLast)->get();
         } else {
-            $data = Cargo::whereDate('created_at', '>=', $date1)->whereDate('created_at', '<=', $date2)->get();
+            $data = Cargo::whereDate('created_at', '>=', $dateStart)->whereDate('created_at', '<=', $dateLast)->get();
         }
         return CargoResource::collection($data);
 

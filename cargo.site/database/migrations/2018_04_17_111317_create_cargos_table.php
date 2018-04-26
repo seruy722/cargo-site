@@ -19,8 +19,8 @@ class CreateCargosTable extends Migration
             $table->integer('price')->default(0);
             $table->integer('client_id')->unsigned();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
-            $table->integer('count_place')->nullable()->default(0);
-            $table->integer('kg')->nullable()->default(0);
+            $table->integer('count_place')->default(0);
+            $table->integer('kg')->default(0);
             $table->string('fax_name')->nullable();
             $table->string('notation')->nullable();
             $table->timestamps();

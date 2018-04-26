@@ -46578,9 +46578,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             clients: [],
             url: "http://cargo.site/",
             search: {
-                keyword: "",
-                date1: null,
-                date2: null,
+                keyword: null,
+                keywordID: null,
+                dateStart: null,
+                dateLast: null,
                 selected: [],
                 price: 0,
                 countPlace: 0,
@@ -46588,9 +46589,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 commission: 0
             },
             excel: {
-                json_fields: {},
+                jsonFields: {},
                 excelData: [],
-                json_meta: [[{
+                jsonMeta: [[{
                     key: "charset",
                     value: "utf-8"
                 }]]
@@ -46601,14 +46602,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         var _this = this;
 
         Axios.get(this.url + "api/cargos").then(function (response) {
-            var data = response.data;
-            _this.posts = data.data;
+            return response.data;
+        }).then(function (response) {
+            _this.posts = response.data;
         });
         Axios.get(this.url + "api/clients").then(function (response) {
-            var data = response.data;
-            _this.clients = data.data;
+            return response.data;
+        }).then(function (response) {
+            _this.clients = response.data;
         });
     },
+
     computed: {
         filteredPosts: function filteredPosts() {
             var _this2 = this;
@@ -46624,14 +46628,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     _this2.search.countPlace += element["count_place"];
                     _this2.search.kg += element["kg"];
                     _this2.search.commission += element["commission"];
-                    var elem = element;
-                    elem.created_at = _this2.formatDate(elem.created_at.date);
-                    arrayForPosts.push(elem);
+                    element.created_at = _this2.formatDate(element.created_at.date);
+                    arrayForPosts.push(element);
                 });
                 this.posts = arrayForPosts;
+                this.prepareDataToExcel();
                 return this.posts;
             }
-            this.prepareDataToExcel();
         }
     },
     methods: {
@@ -46645,36 +46648,47 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (yy < 10) yy = "0" + yy;
             return dd + "." + mm + "." + yy;
         },
-        fetchSearch: function fetchSearch() {
+        changeClientNameToID: function changeClientNameToID() {
             var _this3 = this;
 
+            this.clients.forEach(function (element) {
+                if (element.name == _this3.search.keyword) {
+                    _this3.search.keywordID = element.id;
+                }
+            });
+        },
+        fetchSearch: function fetchSearch() {
+            var _this4 = this;
+
+            this.changeClientNameToID();
             if (this.table === "cargos") {
                 Axios.post(this.url + "api/search/cargos", {
-                    keyword: this.search.keyword,
-                    date1: this.search.date1,
-                    date2: this.search.date2,
+                    keyword: this.search.keywordID,
+                    dateStart: this.search.dateStart,
+                    dateLast: this.search.dateLast,
                     table: this.table
                 }).then(function (response) {
-                    var data = response.data;
-                    _this3.posts = data.data;
+                    return response.data;
+                }).then(function (response) {
+                    _this4.posts = response.data;
                 });
             } else {
                 Axios.post(this.url + "api/search/debts", {
                     keyword: this.search.keyword,
-                    date1: this.search.date1,
-                    date2: this.search.date2,
+                    dateStart: this.search.dateStart,
+                    dateLast: this.search.dateLast,
                     table: this.table
                 }).then(function (response) {
-                    var data = response.data;
-                    _this3.posts = data.data;
+                    return response.data;
+                }).then(function (response) {
+                    _this4.posts = response.data;
                 });
             }
-            this.prepareDataToExcel();
         },
         prepareDataToExcel: function prepareDataToExcel() {
             this.excel.excelData = [];
             if (this.table === "cargos") {
-                this.excel.json_fields = {
+                this.excel.jsonFields = {
                     Дата: "created_at",
                     Тип: "type",
                     Сумма: "price",
@@ -46684,11 +46698,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     Факс: "fax_name",
                     Примечания: "notation"
                 };
+            } else {
+                this.excel.jsonFields = {
+                    Дата: "created_at",
+                    Тип: "type",
+                    Сумма: "price",
+                    Пользователь: "client_name",
+                    Комиссия: "commission",
+                    Примечания: "notation"
+                };
             }
             this.excel.excelData = this.posts;
         },
         change: function change() {
-            console.log(this.clients);
+            var _this5 = this;
+
+            this.clients.forEach(function (element) {
+                if (element.name == _this5.search.keyword) {
+                    console.log(element.id);
+                }
+            });
         }
     }
 });
@@ -46736,7 +46765,7 @@ var render = function() {
             staticClass: "btn btn-success",
             attrs: {
               data: _vm.excel.excelData,
-              fields: _vm.excel.json_fields,
+              fields: _vm.excel.jsonFields,
               name: _vm.search.keyword
             }
           },
@@ -46769,12 +46798,12 @@ var render = function() {
           {
             name: "model",
             rawName: "v-model",
-            value: _vm.search.date1,
-            expression: "search.date1"
+            value: _vm.search.dateStart,
+            expression: "search.dateStart"
           }
         ],
         attrs: { type: "date" },
-        domProps: { value: _vm.search.date1 },
+        domProps: { value: _vm.search.dateStart },
         on: {
           change: function($event) {
             _vm.fetchSearch()
@@ -46783,7 +46812,7 @@ var render = function() {
             if ($event.target.composing) {
               return
             }
-            _vm.$set(_vm.search, "date1", $event.target.value)
+            _vm.$set(_vm.search, "dateStart", $event.target.value)
           }
         }
       }),
@@ -46793,12 +46822,12 @@ var render = function() {
           {
             name: "model",
             rawName: "v-model",
-            value: _vm.search.date2,
-            expression: "search.date2"
+            value: _vm.search.dateLast,
+            expression: "search.dateLast"
           }
         ],
         attrs: { type: "date" },
-        domProps: { value: _vm.search.date2 },
+        domProps: { value: _vm.search.dateLast },
         on: {
           change: function($event) {
             _vm.fetchSearch()
@@ -46807,7 +46836,7 @@ var render = function() {
             if ($event.target.composing) {
               return
             }
-            _vm.$set(_vm.search, "date2", $event.target.value)
+            _vm.$set(_vm.search, "dateLast", $event.target.value)
           }
         }
       }),
@@ -46826,6 +46855,7 @@ var render = function() {
           domProps: { value: _vm.search.keyword },
           on: {
             change: function($event) {
+              $event.target.select()
               _vm.fetchSearch()
             },
             input: function($event) {
@@ -46841,13 +46871,13 @@ var render = function() {
           "datalist",
           { attrs: { id: "client" } },
           [
-            _c("option", { attrs: { value: "" } }, [_vm._v("Все")]),
+            _c("option", { attrs: { value: "Все" } }, [_vm._v("Все")]),
             _vm._v(" "),
             _vm._l(_vm.clients, function(client, index) {
               return _c(
                 "option",
-                { key: index, domProps: { value: client.id } },
-                [_vm._v(_vm._s(client.name) + "\n                ")]
+                { key: index, domProps: { value: client.name } },
+                [_vm._v(_vm._s(client.id) + "\n                ")]
               )
             })
           ],
@@ -47008,8 +47038,8 @@ var render = function() {
                   {
                     key: post.id,
                     class: {
-                      danger: post.type == "Долг",
-                      success: post.type == "Оплата"
+                      danger: post.type === "Долг",
+                      success: post.type === "Оплата"
                     }
                   },
                   [

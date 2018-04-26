@@ -12,7 +12,7 @@
             <download-excel
                     class="btn btn-success"
                     :data='excel.excelData'
-                    :fields="excel.json_fields"
+                    :fields="excel.jsonFields"
                     :name="search.keyword">
                 Excel
             </download-excel>
@@ -21,13 +21,13 @@
         </div>
         <div>
             <label for="date1">Дата</label>
-            <input type="date" @change="fetchSearch()" v-model="search.date1">
-            <input type="date" @change="fetchSearch()" v-model="search.date2">
+            <input type="date" @change="fetchSearch()" v-model="search.dateStart">
+            <input type="date" @change="fetchSearch()" v-model="search.dateLast">
             <div>
-                <input list="client" v-model="search.keyword" @change="fetchSearch()">
+                <input list="client" v-model="search.keyword"  @change="$event.target.select();fetchSearch()" >
                 <datalist id="client">
-                    <option value="">Все</option>
-                    <option v-for="(client,index) in clients" :key="index" v-bind:value="client.id">{{client.name}}
+                    <option value="Все">Все</option>
+                    <option v-for="(client,index) in clients" :key="index" v-bind:value="client.name">{{client.id}}
                     </option>
                 </datalist>
             </div>
@@ -95,7 +95,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="(post, i) in filteredPosts" :key="post.id"
-                    v-bind:class="{'danger':post.type=='Долг','success':post.type=='Оплата'}">
+                    v-bind:class="{'danger':post.type==='Долг','success':post.type==='Оплата'}">
                     <td>{{i + 1}}</td>
                     <td v-for="(element,index) in post" :key="element.id" v-if="index!='id'">{{element}}</td>
                     <td>
@@ -117,16 +117,17 @@
 
 <script>
     export default {
-        data: function () {
+        data() {
             return {
                 table: "cargos",
                 posts: [],
                 clients: [],
                 url: "http://cargo.site/",
                 search: {
-                    keyword: "",
-                    date1: null,
-                    date2: null,
+                    keyword: null,
+                    keywordID:null,
+                    dateStart: null,
+                    dateLast: null,
                     selected: [],
                     price: 0,
                     countPlace: 0,
@@ -134,9 +135,9 @@
                     commission: 0
                 },
                 excel: {
-                    json_fields: {},
+                    jsonFields: {},
                     excelData: [],
-                    json_meta: [
+                    jsonMeta: [
                         [
                             {
                                 key: "charset",
@@ -147,7 +148,7 @@
                 }
             };
         },
-        created: function () {
+        created() {
             Axios.get(this.url + "api/cargos").then(response => response.data).then(response => {
                 this.posts = response.data;
             });
@@ -168,14 +169,13 @@
                         this.search.countPlace += element["count_place"];
                         this.search.kg += element["kg"];
                         this.search.commission += element["commission"];
-                        let elem = element;
-                        elem.created_at = this.formatDate(elem.created_at.date);
-                        arrayForPosts.push(elem);
+                        element.created_at = this.formatDate(element.created_at.date);
+                        arrayForPosts.push(element);
                     });
                     this.posts = arrayForPosts;
+                    this.prepareDataToExcel();
                     return this.posts;
                 }
-                this.prepareDataToExcel();
             }
         },
         methods: {
@@ -189,12 +189,20 @@
                 if (yy < 10) yy = "0" + yy;
                 return dd + "." + mm + "." + yy;
             },
+            changeClientNameToID() {
+                this.clients.forEach(element => {
+                    if (element.name == this.search.keyword) {
+                        this.search.keywordID = element.id;
+                    }
+                });
+            },
             fetchSearch() {
+                this.changeClientNameToID();
                 if (this.table === "cargos") {
                     Axios.post(this.url + "api/search/cargos", {
-                        keyword: this.search.keyword,
-                        date1: this.search.date1,
-                        date2: this.search.date2,
+                        keyword: this.search.keywordID,
+                        dateStart: this.search.dateStart,
+                        dateLast: this.search.dateLast,
                         table: this.table
                     }).then(response => response.data).then(response => {
                         this.posts = response.data;
@@ -202,19 +210,18 @@
                 } else {
                     Axios.post(this.url + "api/search/debts", {
                         keyword: this.search.keyword,
-                        date1: this.search.date1,
-                        date2: this.search.date2,
+                        dateStart: this.search.dateStart,
+                        dateLast: this.search.dateLast,
                         table: this.table
                     }).then(response => response.data).then(response => {
                         this.posts = response.data;
                     });
                 }
-                this.prepareDataToExcel();
             },
             prepareDataToExcel() {
                 this.excel.excelData = [];
                 if (this.table === "cargos") {
-                    this.excel.json_fields = {
+                    this.excel.jsonFields = {
                         Дата: "created_at",
                         Тип: "type",
                         Сумма: "price",
@@ -225,7 +232,7 @@
                         Примечания: "notation"
                     };
                 } else {
-                    this.excel.json_fields = {
+                    this.excel.jsonFields = {
                         Дата: "created_at",
                         Тип: "type",
                         Сумма: "price",
@@ -237,7 +244,11 @@
                 this.excel.excelData = this.posts;
             },
             change() {
-                console.log(this.excel.excelData);
+                this.clients.forEach(element => {
+                    if (element.name == this.search.keyword) {
+                        console.log(element.id);
+                    }
+                });
             }
         }
     };
