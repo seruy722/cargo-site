@@ -46569,6 +46569,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -46578,8 +46595,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             clients: [],
             url: "http://cargo.site/",
             search: {
-                keyword: null,
-                keywordID: null,
+                typeTable: null,
+                client: null,
+                clientID: null,
                 dateStart: null,
                 dateLast: null,
                 selected: [],
@@ -46652,8 +46670,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this3 = this;
 
             this.clients.forEach(function (element) {
-                if (element.name == _this3.search.keyword) {
-                    _this3.search.keywordID = element.id;
+                if (_this3.search.client == 'Все') {
+                    _this3.search.clientID = null;
+                }
+                if (element.name == _this3.search.client) {
+                    _this3.search.clientID = element.id;
                 }
             });
         },
@@ -46663,10 +46684,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.changeClientNameToID();
             if (this.table === "cargos") {
                 Axios.post(this.url + "api/search/cargos", {
-                    keyword: this.search.keywordID,
+                    keyword: this.search.clientID,
                     dateStart: this.search.dateStart,
                     dateLast: this.search.dateLast,
-                    table: this.table
+                    table: this.table,
+                    typeTable: this.search.typeTable
                 }).then(function (response) {
                     return response.data;
                 }).then(function (response) {
@@ -46674,10 +46696,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 });
             } else {
                 Axios.post(this.url + "api/search/debts", {
-                    keyword: this.search.keyword,
+                    keyword: this.search.clientID,
                     dateStart: this.search.dateStart,
                     dateLast: this.search.dateLast,
-                    table: this.table
+                    table: this.table,
+                    typeTable: this.search.typeTable
                 }).then(function (response) {
                     return response.data;
                 }).then(function (response) {
@@ -46711,13 +46734,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.excel.excelData = this.posts;
         },
         change: function change() {
-            var _this5 = this;
-
-            this.clients.forEach(function (element) {
-                if (element.name == _this5.search.keyword) {
-                    console.log(element.id);
-                }
-            });
+            console.log(this.button);
         }
     }
 });
@@ -46733,7 +46750,7 @@ var render = function() {
   return _c("div", { staticClass: "row" }, [
     _c(
       "div",
-      { staticClass: "pull-right" },
+      { staticClass: "col-md-6" },
       [
         _c(
           "router-link",
@@ -46790,79 +46807,90 @@ var render = function() {
       1
     ),
     _vm._v(" "),
-    _c("div", [
-      _c("label", { attrs: { for: "date1" } }, [_vm._v("Дата")]),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.search.dateStart,
-            expression: "search.dateStart"
-          }
-        ],
-        attrs: { type: "date" },
-        domProps: { value: _vm.search.dateStart },
-        on: {
-          change: function($event) {
-            _vm.fetchSearch()
-          },
-          input: function($event) {
-            if ($event.target.composing) {
-              return
+    _c("div", { staticClass: "col-md-6" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-md-3" }, [
+          _c("span", { staticClass: "glyphicon glyphicon-calendar" }, [
+            _vm._v("Даты")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.search.dateStart,
+                expression: "search.dateStart"
+              }
+            ],
+            attrs: { type: "date" },
+            domProps: { value: _vm.search.dateStart },
+            on: {
+              change: function($event) {
+                _vm.fetchSearch()
+              },
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.search, "dateStart", $event.target.value)
+              }
             }
-            _vm.$set(_vm.search, "dateStart", $event.target.value)
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.search.dateLast,
-            expression: "search.dateLast"
-          }
-        ],
-        attrs: { type: "date" },
-        domProps: { value: _vm.search.dateLast },
-        on: {
-          change: function($event) {
-            _vm.fetchSearch()
-          },
-          input: function($event) {
-            if ($event.target.composing) {
-              return
+          }),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.search.dateLast,
+                expression: "search.dateLast"
+              }
+            ],
+            attrs: { type: "date" },
+            domProps: { value: _vm.search.dateLast },
+            on: {
+              change: function($event) {
+                _vm.fetchSearch()
+              },
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.search, "dateLast", $event.target.value)
+              }
             }
-            _vm.$set(_vm.search, "dateLast", $event.target.value)
-          }
-        }
-      }),
+          })
+        ])
+      ]),
       _vm._v(" "),
       _c("div", [
+        _c("span", { staticClass: "glyphicon glyphicon-user" }),
+        _vm._v(" "),
         _c("input", {
           directives: [
             {
               name: "model",
               rawName: "v-model",
-              value: _vm.search.keyword,
-              expression: "search.keyword"
+              value: _vm.search.client,
+              expression: "search.client"
             }
           ],
-          attrs: { list: "client" },
-          domProps: { value: _vm.search.keyword },
+          attrs: { list: "client", autofocus: "" },
+          domProps: { value: _vm.search.client },
           on: {
             change: function($event) {
               $event.target.select()
               _vm.fetchSearch()
             },
+            click: function($event) {
+              $event.target.select()
+            },
             input: function($event) {
               if ($event.target.composing) {
                 return
               }
-              _vm.$set(_vm.search, "keyword", $event.target.value)
+              _vm.$set(_vm.search, "client", $event.target.value)
             }
           }
         }),
@@ -46871,7 +46899,7 @@ var render = function() {
           "datalist",
           { attrs: { id: "client" } },
           [
-            _c("option", { attrs: { value: "Все" } }, [_vm._v("Все")]),
+            _c("option", { attrs: { value: "Все" } }, [_vm._v("0")]),
             _vm._v(" "),
             _vm._l(_vm.clients, function(client, index) {
               return _c(
@@ -46885,45 +46913,97 @@ var render = function() {
         )
       ]),
       _vm._v(" "),
-      _c(
-        "select",
-        {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.table,
-              expression: "table"
-            }
-          ],
-          staticClass: "list-group",
-          on: {
-            change: [
-              function($event) {
-                var $$selectedVal = Array.prototype.filter
-                  .call($event.target.options, function(o) {
-                    return o.selected
-                  })
-                  .map(function(o) {
-                    var val = "_value" in o ? o._value : o.value
-                    return val
-                  })
-                _vm.table = $event.target.multiple
-                  ? $$selectedVal
-                  : $$selectedVal[0]
-              },
-              function($event) {
-                _vm.fetchSearch()
+      _c("div", [
+        _c("span", { staticClass: "glyphicon glyphicon-th-list" }),
+        _vm._v(" "),
+        _c(
+          "select",
+          {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.table,
+                expression: "table"
               }
-            ]
-          }
-        },
-        [
-          _c("option", { attrs: { value: "cargos" } }, [_vm._v("КАРГО")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "debts" } }, [_vm._v("ДОЛГИ")])
-        ]
-      )
+            ],
+            staticClass: "list-group",
+            on: {
+              change: [
+                function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.table = $event.target.multiple
+                    ? $$selectedVal
+                    : $$selectedVal[0]
+                },
+                function($event) {
+                  _vm.fetchSearch()
+                }
+              ]
+            }
+          },
+          [
+            _c("option", { attrs: { value: "cargos" } }, [_vm._v("КАРГО")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "debts" } }, [_vm._v("ДОЛГИ")])
+          ]
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", [
+        _c("span", { staticClass: "glyphicon glyphicon-th-list" }),
+        _vm._v(" "),
+        _c(
+          "select",
+          {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.search.typeTable,
+                expression: "search.typeTable"
+              }
+            ],
+            staticClass: "list-group",
+            on: {
+              change: [
+                function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.$set(
+                    _vm.search,
+                    "typeTable",
+                    $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                  )
+                },
+                function($event) {
+                  _vm.fetchSearch()
+                }
+              ]
+            }
+          },
+          [
+            _c("option", { attrs: { value: "" } }, [_vm._v("Все")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "Оплата" } }, [_vm._v("ОПЛАТА")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "Долг" } }, [_vm._v("ДОЛГ")])
+          ]
+        )
+      ])
     ]),
     _vm._v(" "),
     this.table === "cargos"
@@ -46969,38 +47049,21 @@ var render = function() {
                     _c(
                       "td",
                       [
-                        _c(
-                          "router-link",
-                          {
-                            staticClass: "btn btn-sm btn-warning",
-                            attrs: {
-                              to: { name: "Editpost", params: { id: post.id } }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "\n                        Редактировать\n                    "
-                            )
-                          ]
-                        ),
+                        _c("router-link", {
+                          staticClass:
+                            "btn btn-sm btn-warning glyphicon glyphicon-edit",
+                          attrs: {
+                            to: { name: "Editpost", params: { id: post.id } }
+                          }
+                        }),
                         _vm._v(" "),
-                        _c(
-                          "router-link",
-                          {
-                            staticClass: "btn btn-sm btn-danger",
-                            attrs: {
-                              to: {
-                                name: "Deletepost",
-                                params: { id: post.id }
-                              }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "\n                        Удалить\n                    "
-                            )
-                          ]
-                        )
+                        _c("router-link", {
+                          staticClass:
+                            "btn btn-sm btn-danger glyphicon glyphicon-remove",
+                          attrs: {
+                            to: { name: "Deletepost", params: { id: post.id } }
+                          }
+                        })
                       ],
                       1
                     )
@@ -47118,7 +47181,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Сумма")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Пользователь")]),
+        _c("th", [_vm._v("Клиент")]),
         _vm._v(" "),
         _c("th", [_vm._v("Мест")]),
         _vm._v(" "),
@@ -47128,7 +47191,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Примечание")]),
         _vm._v(" "),
-        _c("th", { staticClass: "col-md-2" }, [_vm._v("Действия")])
+        _c("th", { staticClass: "col-md-1" }, [_vm._v("Действия")])
       ])
     ])
   },
@@ -47146,7 +47209,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Сумма")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Пользователь")]),
+        _c("th", [_vm._v("Клиент")]),
         _vm._v(" "),
         _c("th", [_vm._v("Комиссия")]),
         _vm._v(" "),

@@ -26,6 +26,7 @@ class DebtController extends Controller
     public function search(Request $request)
     {
         $key = $request->keyword;
+        $type = $request->typeTable;
         if ($request->dateStart) {
             $dateStart = date('Y-m-d', strtotime($request->dateStart));
         } else {
@@ -36,12 +37,16 @@ class DebtController extends Controller
         } else {
             $dateLast = date(now());
         }
-
-        if ($key && $key!=='Все') {
+        if ($key && $type) {
+            $data = Debt::where('type', $type)->where('client_id', $key)->whereDate('created_at', '>=', $dateStart)->whereDate('created_at', '<=', $dateLast)->get();
+        } elseif ($key) {
             $data = Debt::where('client_id', $key)->whereDate('created_at', '>=', $dateStart)->whereDate('created_at', '<=', $dateLast)->get();
+        } else if ($type) {
+            $data = Debt::where('type', $type)->whereDate('created_at', '>=', $dateStart)->whereDate('created_at', '<=', $dateLast)->get();
         } else {
             $data = Debt::whereDate('created_at', '>=', $dateStart)->whereDate('created_at', '<=', $dateLast)->get();
         }
+
         return DebtResource::collection($data);
 
     }

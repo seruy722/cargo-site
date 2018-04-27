@@ -1,6 +1,6 @@
 <template id="post-list">
     <div class="row">
-        <div class="pull-right">
+        <div class="col-md-6">
             <router-link class="btn btn-sm btn-primary" v-bind:to="{path:'/add-post'}">
                 <span class="glyphicon glyphicon-plus"></span>
                 Оплата
@@ -19,22 +19,38 @@
             <br><br>
             <button @click="change()">Send</button>
         </div>
-        <div>
-            <label for="date1">Дата</label>
-            <input type="date" @change="fetchSearch()" v-model="search.dateStart">
-            <input type="date" @change="fetchSearch()" v-model="search.dateLast">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-3">
+                    <span class="glyphicon glyphicon-calendar">Даты</span>
+                    <input type="date" @change="fetchSearch()" v-model="search.dateStart">
+                    <input type="date" @change="fetchSearch()" v-model="search.dateLast">
+                </div>
+            </div>
             <div>
-                <input list="client" v-model="search.keyword"  @change="$event.target.select();fetchSearch()" >
+                <span class="glyphicon glyphicon-user"></span>
+                <input list="client" v-model="search.client" @change="$event.target.select();fetchSearch()" @click="$event.target.select()" autofocus>
                 <datalist id="client">
-                    <option value="Все">Все</option>
+                    <option value="Все">0</option>
                     <option v-for="(client,index) in clients" :key="index" v-bind:value="client.name">{{client.id}}
                     </option>
                 </datalist>
             </div>
-            <select class="list-group" v-model="table" @change="fetchSearch()">
-                <option value="cargos">КАРГО</option>
-                <option value="debts">ДОЛГИ</option>
-            </select>
+            <div>
+                <span class="glyphicon glyphicon-th-list"></span>
+                <select class="list-group" v-model="table" @change="fetchSearch()">
+                    <option value="cargos">КАРГО</option>
+                    <option value="debts">ДОЛГИ</option>
+                </select>
+            </div>
+            <div>
+                <span class="glyphicon glyphicon-th-list"></span>
+                <select class="list-group" v-model="search.typeTable" @change="fetchSearch()">
+                    <option value="">Все</option>
+                    <option value="Оплата">ОПЛАТА</option>
+                    <option value="Долг">ДОЛГ</option>
+                </select>
+            </div>
         </div>
         <div v-if="this.table==='cargos'">
             <div v-if="this.posts.length">
@@ -49,12 +65,12 @@
                     <th>Дата</th>
                     <th>Тип</th>
                     <th>Сумма</th>
-                    <th>Пользователь</th>
+                    <th>Клиент</th>
                     <th>Мест</th>
                     <th>Вес</th>
                     <th>Факс</th>
                     <th>Примечание</th>
-                    <th class="col-md-2">Действия</th>
+                    <th class="col-md-1">Действия</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -63,11 +79,12 @@
                     <td>{{i + 1}}</td>
                     <td v-for="(element,index) in post" :key="element.id" v-if="index!='id'">{{element}}</td>
                     <td>
-                        <router-link class="btn btn-sm btn-warning" v-bind:to="{name:'Editpost',params:{id:post.id}}">
-                            Редактировать
+                        <router-link class="btn btn-sm btn-warning glyphicon glyphicon-edit"
+                                     v-bind:to="{name:'Editpost',params:{id:post.id}}">
+
                         </router-link>
-                        <router-link class="btn btn-sm btn-danger" v-bind:to="{name:'Deletepost',params:{id:post.id}}">
-                            Удалить
+                        <router-link class="btn btn-sm btn-danger glyphicon glyphicon-remove"
+                                     v-bind:to="{name:'Deletepost',params:{id:post.id}}">
                         </router-link>
                     </td>
                 </tr>
@@ -87,7 +104,7 @@
                     <th>Дата</th>
                     <th>Тип</th>
                     <th>Сумма</th>
-                    <th>Пользователь</th>
+                    <th>Клиент</th>
                     <th>Комиссия</th>
                     <th>Примечание</th>
                     <th class="col-md-2">Действия</th>
@@ -124,8 +141,9 @@
                 clients: [],
                 url: "http://cargo.site/",
                 search: {
-                    keyword: null,
-                    keywordID:null,
+                    typeTable: null,
+                    client: null,
+                    clientID: null,
                     dateStart: null,
                     dateLast: null,
                     selected: [],
@@ -191,8 +209,11 @@
             },
             changeClientNameToID() {
                 this.clients.forEach(element => {
-                    if (element.name == this.search.keyword) {
-                        this.search.keywordID = element.id;
+                    if (this.search.client == 'Все') {
+                        this.search.clientID = null;
+                    }
+                    if (element.name == this.search.client) {
+                        this.search.clientID = element.id;
                     }
                 });
             },
@@ -200,19 +221,21 @@
                 this.changeClientNameToID();
                 if (this.table === "cargos") {
                     Axios.post(this.url + "api/search/cargos", {
-                        keyword: this.search.keywordID,
+                        keyword: this.search.clientID,
                         dateStart: this.search.dateStart,
                         dateLast: this.search.dateLast,
-                        table: this.table
+                        table: this.table,
+                        typeTable: this.search.typeTable
                     }).then(response => response.data).then(response => {
                         this.posts = response.data;
                     });
                 } else {
                     Axios.post(this.url + "api/search/debts", {
-                        keyword: this.search.keyword,
+                        keyword: this.search.clientID,
                         dateStart: this.search.dateStart,
                         dateLast: this.search.dateLast,
-                        table: this.table
+                        table: this.table,
+                        typeTable: this.search.typeTable
                     }).then(response => response.data).then(response => {
                         this.posts = response.data;
                     });
@@ -244,11 +267,7 @@
                 this.excel.excelData = this.posts;
             },
             change() {
-                this.clients.forEach(element => {
-                    if (element.name == this.search.keyword) {
-                        console.log(element.id);
-                    }
-                });
+                console.log(this.button);
             }
         }
     };

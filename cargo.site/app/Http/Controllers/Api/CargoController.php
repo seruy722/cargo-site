@@ -23,6 +23,7 @@ class CargoController extends Controller
     public function search(Request $request)
     {
         $key = $request->keyword;
+        $type = $request->typeTable;
         if ($request->dateStart) {
             $dateStart = date('Y-m-d', strtotime($request->dateStart));
         } else {
@@ -33,12 +34,16 @@ class CargoController extends Controller
         } else {
             $dateLast = date(now());
         }
-
-        if ($key && $key!=='Все') {
+        if ($key && $type) {
+            $data = Cargo::where('type', $type)->where('client_id', $key)->whereDate('created_at', '>=', $dateStart)->whereDate('created_at', '<=', $dateLast)->get();
+        } elseif ($key) {
             $data = Cargo::where('client_id', $key)->whereDate('created_at', '>=', $dateStart)->whereDate('created_at', '<=', $dateLast)->get();
+        } else if ($type) {
+            $data = Cargo::where('type', $type)->whereDate('created_at', '>=', $dateStart)->whereDate('created_at', '<=', $dateLast)->get();
         } else {
             $data = Cargo::whereDate('created_at', '>=', $dateStart)->whereDate('created_at', '<=', $dateLast)->get();
         }
+
         return CargoResource::collection($data);
 
     }
