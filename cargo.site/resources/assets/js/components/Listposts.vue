@@ -1,6 +1,6 @@
 <template id="post-list">
     <div class="row">
-        <div class="col-md-6">
+        <div >
             <router-link class="btn btn-sm btn-primary" v-bind:to="{path:'/add-post'}">
                 <span class="glyphicon glyphicon-plus"></span>
                 Оплата
@@ -17,17 +17,16 @@
                 Excel
             </download-excel>
             <br><br>
-            <button @click="change()">Send</button>
         </div>
-        <div class="col-md-6">
+        <div >
             <div class="row">
-                <div class="col-md-3">
-                    <span class="glyphicon glyphicon-calendar">Даты</span>
+                <div class="col-md-4">
+                    <span class="glyphicon glyphicon-calendar"></span>
                     <input type="date" @change="fetchSearch()" v-model="search.dateStart">
                     <input type="date" @change="fetchSearch()" v-model="search.dateLast">
                 </div>
-            </div>
-            <div>
+
+            <div class="col-md-3">
                 <span class="glyphicon glyphicon-user"></span>
                 <input list="client" v-model="search.client" @change="$event.target.select();fetchSearch()" @click="$event.target.select()" autofocus>
                 <datalist id="client">
@@ -36,20 +35,21 @@
                     </option>
                 </datalist>
             </div>
-            <div>
+            <div class="col-md-2">
                 <span class="glyphicon glyphicon-th-list"></span>
                 <select class="list-group" v-model="table" @change="fetchSearch()">
                     <option value="cargos">КАРГО</option>
                     <option value="debts">ДОЛГИ</option>
                 </select>
             </div>
-            <div>
+            <div class="col-md-3">
                 <span class="glyphicon glyphicon-th-list"></span>
                 <select class="list-group" v-model="search.typeTable" @change="fetchSearch()">
                     <option value="">Все</option>
                     <option value="Оплата">ОПЛАТА</option>
                     <option value="Долг">ДОЛГ</option>
                 </select>
+            </div>
             </div>
         </div>
         <div v-if="this.table==='cargos'">

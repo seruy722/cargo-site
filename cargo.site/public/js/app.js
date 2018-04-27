@@ -1092,7 +1092,6 @@ window.VueRouter = __webpack_require__(39).default;
 window.VueAxios = __webpack_require__(40).default;
 window.Axios = __webpack_require__(4).default;
 window.JsonExcel = __webpack_require__(41);
-
 Vue.component('downloadExcel', JsonExcel);
 
 var AppLayout = __webpack_require__(45);
@@ -46750,7 +46749,6 @@ var render = function() {
   return _c("div", { staticClass: "row" }, [
     _c(
       "div",
-      { staticClass: "col-md-6" },
       [
         _c(
           "router-link",
@@ -46790,29 +46788,15 @@ var render = function() {
         ),
         _vm._v(" "),
         _c("br"),
-        _c("br"),
-        _vm._v(" "),
-        _c(
-          "button",
-          {
-            on: {
-              click: function($event) {
-                _vm.change()
-              }
-            }
-          },
-          [_vm._v("Send")]
-        )
+        _c("br")
       ],
       1
     ),
     _vm._v(" "),
-    _c("div", { staticClass: "col-md-6" }, [
+    _c("div", [
       _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-md-3" }, [
-          _c("span", { staticClass: "glyphicon glyphicon-calendar" }, [
-            _vm._v("Даты")
-          ]),
+        _c("div", { staticClass: "col-md-4" }, [
+          _c("span", { staticClass: "glyphicon glyphicon-calendar" }),
           _vm._v(" "),
           _c("input", {
             directives: [
@@ -46861,148 +46845,148 @@ var render = function() {
               }
             }
           })
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", [
-        _c("span", { staticClass: "glyphicon glyphicon-user" }),
+        ]),
         _vm._v(" "),
-        _c("input", {
-          directives: [
+        _c("div", { staticClass: "col-md-3" }, [
+          _c("span", { staticClass: "glyphicon glyphicon-user" }),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.search.client,
+                expression: "search.client"
+              }
+            ],
+            attrs: { list: "client", autofocus: "" },
+            domProps: { value: _vm.search.client },
+            on: {
+              change: function($event) {
+                $event.target.select()
+                _vm.fetchSearch()
+              },
+              click: function($event) {
+                $event.target.select()
+              },
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.search, "client", $event.target.value)
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c(
+            "datalist",
+            { attrs: { id: "client" } },
+            [
+              _c("option", { attrs: { value: "Все" } }, [_vm._v("0")]),
+              _vm._v(" "),
+              _vm._l(_vm.clients, function(client, index) {
+                return _c(
+                  "option",
+                  { key: index, domProps: { value: client.name } },
+                  [_vm._v(_vm._s(client.id) + "\n                ")]
+                )
+              })
+            ],
+            2
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-md-2" }, [
+          _c("span", { staticClass: "glyphicon glyphicon-th-list" }),
+          _vm._v(" "),
+          _c(
+            "select",
             {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.search.client,
-              expression: "search.client"
-            }
-          ],
-          attrs: { list: "client", autofocus: "" },
-          domProps: { value: _vm.search.client },
-          on: {
-            change: function($event) {
-              $event.target.select()
-              _vm.fetchSearch()
-            },
-            click: function($event) {
-              $event.target.select()
-            },
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.$set(_vm.search, "client", $event.target.value)
-            }
-          }
-        }),
-        _vm._v(" "),
-        _c(
-          "datalist",
-          { attrs: { id: "client" } },
-          [
-            _c("option", { attrs: { value: "Все" } }, [_vm._v("0")]),
-            _vm._v(" "),
-            _vm._l(_vm.clients, function(client, index) {
-              return _c(
-                "option",
-                { key: index, domProps: { value: client.name } },
-                [_vm._v(_vm._s(client.id) + "\n                ")]
-              )
-            })
-          ],
-          2
-        )
-      ]),
-      _vm._v(" "),
-      _c("div", [
-        _c("span", { staticClass: "glyphicon glyphicon-th-list" }),
-        _vm._v(" "),
-        _c(
-          "select",
-          {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.table,
-                expression: "table"
-              }
-            ],
-            staticClass: "list-group",
-            on: {
-              change: [
-                function($event) {
-                  var $$selectedVal = Array.prototype.filter
-                    .call($event.target.options, function(o) {
-                      return o.selected
-                    })
-                    .map(function(o) {
-                      var val = "_value" in o ? o._value : o.value
-                      return val
-                    })
-                  _vm.table = $event.target.multiple
-                    ? $$selectedVal
-                    : $$selectedVal[0]
-                },
-                function($event) {
-                  _vm.fetchSearch()
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.table,
+                  expression: "table"
                 }
-              ]
-            }
-          },
-          [
-            _c("option", { attrs: { value: "cargos" } }, [_vm._v("КАРГО")]),
-            _vm._v(" "),
-            _c("option", { attrs: { value: "debts" } }, [_vm._v("ДОЛГИ")])
-          ]
-        )
-      ]),
-      _vm._v(" "),
-      _c("div", [
-        _c("span", { staticClass: "glyphicon glyphicon-th-list" }),
-        _vm._v(" "),
-        _c(
-          "select",
-          {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.search.typeTable,
-                expression: "search.typeTable"
+              ],
+              staticClass: "list-group",
+              on: {
+                change: [
+                  function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.table = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  },
+                  function($event) {
+                    _vm.fetchSearch()
+                  }
+                ]
               }
-            ],
-            staticClass: "list-group",
-            on: {
-              change: [
-                function($event) {
-                  var $$selectedVal = Array.prototype.filter
-                    .call($event.target.options, function(o) {
-                      return o.selected
-                    })
-                    .map(function(o) {
-                      var val = "_value" in o ? o._value : o.value
-                      return val
-                    })
-                  _vm.$set(
-                    _vm.search,
-                    "typeTable",
-                    $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-                  )
-                },
-                function($event) {
-                  _vm.fetchSearch()
+            },
+            [
+              _c("option", { attrs: { value: "cargos" } }, [_vm._v("КАРГО")]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "debts" } }, [_vm._v("ДОЛГИ")])
+            ]
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-md-3" }, [
+          _c("span", { staticClass: "glyphicon glyphicon-th-list" }),
+          _vm._v(" "),
+          _c(
+            "select",
+            {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.search.typeTable,
+                  expression: "search.typeTable"
                 }
-              ]
-            }
-          },
-          [
-            _c("option", { attrs: { value: "" } }, [_vm._v("Все")]),
-            _vm._v(" "),
-            _c("option", { attrs: { value: "Оплата" } }, [_vm._v("ОПЛАТА")]),
-            _vm._v(" "),
-            _c("option", { attrs: { value: "Долг" } }, [_vm._v("ДОЛГ")])
-          ]
-        )
+              ],
+              staticClass: "list-group",
+              on: {
+                change: [
+                  function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.$set(
+                      _vm.search,
+                      "typeTable",
+                      $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                    )
+                  },
+                  function($event) {
+                    _vm.fetchSearch()
+                  }
+                ]
+              }
+            },
+            [
+              _c("option", { attrs: { value: "" } }, [_vm._v("Все")]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "Оплата" } }, [_vm._v("ОПЛАТА")]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "Долг" } }, [_vm._v("ДОЛГ")])
+            ]
+          )
+        ])
       ])
     ]),
     _vm._v(" "),

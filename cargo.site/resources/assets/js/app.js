@@ -5,8 +5,8 @@ window.VueRouter = require('vue-router').default;
 window.VueAxios = require('vue-axios').default;
 window.Axios = require('axios').default;
 window.JsonExcel = require('vue-json-excel');
-
 Vue.component('downloadExcel', JsonExcel);
+
 
 let AppLayout = require('./components/App.vue');
 
