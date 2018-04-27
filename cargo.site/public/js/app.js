@@ -46577,14 +46577,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -46736,10 +46728,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         desroyEntry: function desroyEntry(id) {
             var _this5 = this;
 
-            Axios.delete(this.url + "api/cargos/" + id).then(function (response) {
-                _this5.fetchSearch();
-                console.log(response.data);
-            });
+            var answer = confirm('Удалить запись?');
+            if (answer) {
+                Axios.delete(this.url + "api/cargos/" + id).then(function (response) {
+                    _this5.fetchSearch();
+                    _this5.notification = response.data;
+                });
+            }
         },
         change: function change() {
             console.log(this.button);
@@ -46756,52 +46751,6 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row" }, [
-    _c(
-      "div",
-      [
-        _c(
-          "router-link",
-          {
-            staticClass: "btn btn-sm btn-primary",
-            attrs: { to: { path: "/add-post" } }
-          },
-          [
-            _c("span", { staticClass: "glyphicon glyphicon-plus" }),
-            _vm._v("\n            Оплата\n        ")
-          ]
-        ),
-        _vm._v(" "),
-        _c(
-          "router-link",
-          {
-            staticClass: "btn btn-sm btn-primary",
-            attrs: { to: { path: "/post" } }
-          },
-          [
-            _c("span", { staticClass: "glyphicon glyphicon-plus" }),
-            _vm._v("\n            Долг\n        ")
-          ]
-        ),
-        _vm._v(" "),
-        _c(
-          "download-excel",
-          {
-            staticClass: "btn btn-success",
-            attrs: {
-              data: _vm.excel.excelData,
-              fields: _vm.excel.jsonFields,
-              name: _vm.search.keyword
-            }
-          },
-          [_vm._v("\n            Excel\n        ")]
-        ),
-        _vm._v(" "),
-        _c("br"),
-        _c("br")
-      ],
-      1
-    ),
-    _vm._v(" "),
     _c("div", [
       _c("div", { staticClass: "row" }, [
         _c("div", { staticClass: "col-md-4" }, [
@@ -46897,7 +46846,7 @@ var render = function() {
                 return _c(
                   "option",
                   { key: index, domProps: { value: client.name } },
-                  [_vm._v(_vm._s(client.id) + "\n                ")]
+                  [_vm._v(_vm._s(client.id) + "\n                    ")]
                 )
               })
             ],
@@ -46949,7 +46898,7 @@ var render = function() {
           )
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "col-md-3" }, [
+        _c("div", { staticClass: "col-md-2" }, [
           _c("span", { staticClass: "glyphicon glyphicon-th-list" }),
           _vm._v(" "),
           _c(
@@ -46995,7 +46944,30 @@ var render = function() {
               _c("option", { attrs: { value: "Долг" } }, [_vm._v("ДОЛГ")])
             ]
           )
-        ])
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "col-md-1" },
+          [
+            _c(
+              "download-excel",
+              {
+                staticClass: "btn btn-success",
+                attrs: {
+                  data: _vm.excel.excelData,
+                  fields: _vm.excel.jsonFields,
+                  name: _vm.search.clientID
+                }
+              },
+              [_vm._v("\n                    Excel\n                ")]
+            ),
+            _vm._v(" "),
+            _c("br"),
+            _c("br")
+          ],
+          1
+        )
       ])
     ]),
     _vm._v(" "),
@@ -47114,38 +47086,23 @@ var render = function() {
                     _c(
                       "td",
                       [
-                        _c(
-                          "router-link",
-                          {
-                            staticClass: "btn btn-sm btn-warning",
-                            attrs: {
-                              to: { name: "Editpost", params: { id: post.id } }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "\n                        Редактировать\n                    "
-                            )
-                          ]
-                        ),
+                        _c("router-link", {
+                          staticClass:
+                            "btn btn-sm btn-warning glyphicon glyphicon-edit",
+                          attrs: {
+                            to: { name: "Editpost", params: { id: post.id } }
+                          }
+                        }),
                         _vm._v(" "),
-                        _c(
-                          "router-link",
-                          {
-                            staticClass: "btn btn-sm btn-danger",
-                            attrs: {
-                              to: {
-                                name: "Deletepost",
-                                params: { id: post.id }
-                              }
+                        _c("button", {
+                          staticClass:
+                            "btn btn-sm btn-danger glyphicon glyphicon-remove",
+                          on: {
+                            click: function($event) {
+                              _vm.desroyEntry(post.id)
                             }
-                          },
-                          [
-                            _vm._v(
-                              "\n                        Удалить\n                    "
-                            )
-                          ]
-                        )
+                          }
+                        })
                       ],
                       1
                     )
@@ -47228,12 +47185,11 @@ if (false) {
 /* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(52)
+var __vue_script__ = null
 /* template */
-var __vue_template__ = __webpack_require__(53)
+var __vue_template__ = null
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -47252,499 +47208,12 @@ var Component = normalizeComponent(
 )
 Component.options.__file = "resources\\assets\\js\\components\\Addpost.vue"
 
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-078a571a", Component.options)
-  } else {
-    hotAPI.reload("data-v-078a571a", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
 module.exports = Component.exports
 
 
 /***/ }),
-/* 52 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            keywords: null,
-            posts: "",
-            url: "http://exel.site/",
-            search: {
-                date1: null,
-                date2: null,
-                selected: [],
-                price: 0,
-                countPlace: 0,
-                kg: 0,
-                clients: []
-            }
-        };
-    },
-    created: function created() {
-        var _this = this;
-
-        Axios.get(this.url + "posts/").then(function (response) {
-            _this.posts = response.data;
-        });
-    },
-    computed: {
-        FilteredPosts: function FilteredPosts() {
-            var _this2 = this;
-
-            if (this.posts.length) {
-                this.search.price = 0;
-                this.search.countPlace = 0;
-                this.search.kg = 0;
-                this.search.clients = [];
-                this.posts.forEach(function (element) {
-                    _this2.search.price += element["price"];
-                    _this2.search.countPlace += element["count_place"];
-                    _this2.search.kg += element["kg"];
-                    _this2.search.clients.push(element["client_id"]);
-                });
-                this.search.clients = this.search.clients.filter(function (value, index, arr) {
-                    return arr.indexOf(value) === index;
-                });
-                return this.posts;
-            }
-        }
-    },
-    methods: {
-        formatDate: function formatDate(date) {
-            var data = new Date(date);
-            var dd = data.getDate();
-            if (dd < 10) dd = "0" + dd;
-            var mm = data.getMonth() + 1;
-            if (mm < 10) mm = "0" + mm;
-            var yy = data.getFullYear() % 100;
-            if (yy < 10) yy = "0" + yy;
-            return dd + "." + mm + "." + yy;
-        },
-        fetch: function fetch() {
-            var _this3 = this;
-
-            Axios.post(this.url + "search", {
-                keywords: this.keywords,
-                date1: this.search.date1,
-                date2: this.search.date2
-            }).then(function (response) {
-                _this3.posts = response.data;
-            });
-        },
-        change: function change() {
-            alert(this.search.date1);
-        }
-    }
-});
-
-/***/ }),
-/* 53 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
-    _c(
-      "div",
-      { staticClass: "pull-right" },
-      [
-        _c(
-          "router-link",
-          {
-            staticClass: "btn btn-sm btn-primary",
-            attrs: { to: { path: "/add-post" } }
-          },
-          [
-            _c("span", { staticClass: "glyphicon glyphicon-plus" }),
-            _vm._v("\n            Добавить КАРГО\n        ")
-          ]
-        ),
-        _vm._v(" "),
-        _c("br"),
-        _c("br")
-      ],
-      1
-    ),
-    _vm._v(" "),
-    _c("div", [
-      _c("label", { attrs: { for: "date1" } }, [_vm._v("Дата")]),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.search.date1,
-            expression: "search.date1"
-          }
-        ],
-        attrs: { type: "date" },
-        domProps: { value: _vm.search.date1 },
-        on: {
-          change: function($event) {
-            _vm.fetch()
-          },
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.$set(_vm.search, "date1", $event.target.value)
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.search.date2,
-            expression: "search.date2"
-          }
-        ],
-        attrs: { type: "date" },
-        domProps: { value: _vm.search.date2 },
-        on: {
-          change: function($event) {
-            _vm.fetch()
-          },
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.$set(_vm.search, "date2", $event.target.value)
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.keywords,
-            expression: "keywords"
-          }
-        ],
-        staticClass: "form-control",
-        attrs: { type: "text", placeholder: "Введите первый символ" },
-        domProps: { value: _vm.keywords },
-        on: {
-          keyup: function($event) {
-            _vm.fetch()
-          },
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.keywords = $event.target.value
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c(
-        "select",
-        {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.keywords,
-              expression: "keywords"
-            }
-          ],
-          staticClass: "form-control",
-          on: {
-            change: [
-              function($event) {
-                var $$selectedVal = Array.prototype.filter
-                  .call($event.target.options, function(o) {
-                    return o.selected
-                  })
-                  .map(function(o) {
-                    var val = "_value" in o ? o._value : o.value
-                    return val
-                  })
-                _vm.keywords = $event.target.multiple
-                  ? $$selectedVal
-                  : $$selectedVal[0]
-              },
-              function($event) {
-                _vm.fetch()
-              }
-            ]
-          }
-        },
-        [
-          _c("option", { attrs: { value: "" } }, [_vm._v("Все")]),
-          _vm._v(" "),
-          _vm._l(_vm.search.clients, function(client) {
-            return _c("option", { key: client, domProps: { value: client } }, [
-              _vm._v(_vm._s(client))
-            ])
-          })
-        ],
-        2
-      ),
-      _vm._v(" "),
-      _c(
-        "select",
-        {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.keywords,
-              expression: "keywords"
-            }
-          ],
-          staticClass: "form-control",
-          on: {
-            change: function($event) {
-              var $$selectedVal = Array.prototype.filter
-                .call($event.target.options, function(o) {
-                  return o.selected
-                })
-                .map(function(o) {
-                  var val = "_value" in o ? o._value : o.value
-                  return val
-                })
-              _vm.keywords = $event.target.multiple
-                ? $$selectedVal
-                : $$selectedVal[0]
-            }
-          }
-        },
-        [
-          _c("option", { attrs: { value: "" } }, [_vm._v("Все")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "" } }, [_vm._v("КАРГО")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "" } }, [_vm._v("ДОЛГИ")])
-        ]
-      )
-    ]),
-    _vm._v(" "),
-    _c("div", [
-      _c("span", [_vm._v("Сумма: " + _vm._s(_vm.search.price))]),
-      _vm._v("|\n        "),
-      _c("span", [_vm._v("Кол. мест: " + _vm._s(_vm.search.countPlace))]),
-      _vm._v("|\n        "),
-      _c("span", [_vm._v("Вес: " + _vm._s(_vm.search.kg))])
-    ]),
-    _vm._v(" "),
-    _c("table", { staticClass: "table table-bordered" }, [
-      _vm._m(0),
-      _vm._v(" "),
-      _c(
-        "tbody",
-        _vm._l(_vm.FilteredPosts, function(post, index) {
-          return _c(
-            "tr",
-            {
-              key: post.id,
-              class: {
-                danger: post.type == "Долг",
-                success: post.type == "Оплата"
-              }
-            },
-            [
-              _c("td", [_vm._v(_vm._s(index + 1))]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(_vm.formatDate(post.created_at)))]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(post.type))]),
-              _vm._v(" "),
-              _c(
-                "td",
-                {
-                  on: {
-                    change: function($event) {
-                      _vm.change()
-                    }
-                  }
-                },
-                [_vm._v(_vm._s(post.price))]
-              ),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(post.client_id))]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(post.count_place))]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(post.kg))]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(post.fax_name))]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(post.notation))]),
-              _vm._v(" "),
-              _c(
-                "td",
-                [
-                  _c(
-                    "router-link",
-                    {
-                      staticClass: "btn btn-sm btn-warning",
-                      attrs: {
-                        to: { name: "Editpost", params: { id: post.id } }
-                      }
-                    },
-                    [
-                      _vm._v(
-                        "\n                    Редактировать\n                "
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "router-link",
-                    {
-                      staticClass: "btn btn-sm btn-danger",
-                      attrs: {
-                        to: { name: "Deletepost", params: { id: post.id } }
-                      }
-                    },
-                    [_vm._v("\n                    Удалить\n                ")]
-                  )
-                ],
-                1
-              )
-            ]
-          )
-        })
-      )
-    ])
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", [_vm._v("№")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Дата")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Тип")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Сумма")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Пользователь")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Мест")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Вес")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Факс")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Примечание")]),
-        _vm._v(" "),
-        _c("th", { staticClass: "col-md-2" }, [_vm._v("Действия")])
-      ])
-    ])
-  }
-]
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-078a571a", module.exports)
-  }
-}
-
-/***/ }),
+/* 52 */,
+/* 53 */,
 /* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -47778,11 +47247,12 @@ module.exports = Component.exports
 /* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = null
+var __vue_script__ = __webpack_require__(69)
 /* template */
-var __vue_template__ = null
+var __vue_template__ = __webpack_require__(68)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -47800,6 +47270,22 @@ var Component = normalizeComponent(
   __vue_module_identifier__
 )
 Component.options.__file = "resources\\assets\\js\\components\\Editpost.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-955599be", Component.options)
+  } else {
+    hotAPI.reload("data-v-955599be", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
 
 module.exports = Component.exports
 
@@ -47839,6 +47325,330 @@ module.exports = Component.exports
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 58 */,
+/* 59 */,
+/* 60 */,
+/* 61 */,
+/* 62 */,
+/* 63 */,
+/* 64 */,
+/* 65 */,
+/* 66 */,
+/* 67 */,
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c("h3", [_vm._v("Редактирование записи")]),
+    _vm._v(" "),
+    _c(
+      "form",
+      {
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            return _vm.updatePost($event)
+          }
+        }
+      },
+      [
+        _c("input", { attrs: { type: "date" } }),
+        _vm._v(" "),
+        _c(
+          "select",
+          {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.typeTable,
+                expression: "typeTable"
+              }
+            ],
+            staticClass: "list-group",
+            on: {
+              change: function($event) {
+                var $$selectedVal = Array.prototype.filter
+                  .call($event.target.options, function(o) {
+                    return o.selected
+                  })
+                  .map(function(o) {
+                    var val = "_value" in o ? o._value : o.value
+                    return val
+                  })
+                _vm.typeTable = $event.target.multiple
+                  ? $$selectedVal
+                  : $$selectedVal[0]
+              }
+            }
+          },
+          [
+            _c("option", { attrs: { value: "Оплата" } }, [_vm._v("ОПЛАТА")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "Долг" } }, [_vm._v("ДОЛГ")])
+          ]
+        ),
+        _vm._v(" "),
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.posts.price,
+              expression: "posts.price"
+            }
+          ],
+          attrs: { type: "text" },
+          domProps: { value: _vm.posts.price },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.posts, "price", $event.target.value)
+            }
+          }
+        }),
+        _vm._v(" "),
+        _c("div", [
+          _c("span", { staticClass: "glyphicon glyphicon-user" }),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.client,
+                expression: "client"
+              }
+            ],
+            attrs: { list: "client" },
+            domProps: { value: _vm.client },
+            on: {
+              change: function($event) {
+                $event.target.select()
+              },
+              click: function($event) {
+                $event.target.select()
+              },
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.client = $event.target.value
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c(
+            "datalist",
+            { attrs: { id: "client" } },
+            [
+              _c("option", { attrs: { value: "Все" } }, [_vm._v("0")]),
+              _vm._v(" "),
+              _vm._l(_vm.clients, function(client, index) {
+                return _c(
+                  "option",
+                  { key: index, domProps: { value: client.name } },
+                  [_vm._v(_vm._s(client.id) + "\n                ")]
+                )
+              })
+            ],
+            2
+          )
+        ]),
+        _vm._v(" "),
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.posts.count_place,
+              expression: "posts.count_place"
+            }
+          ],
+          attrs: { type: "text" },
+          domProps: { value: _vm.posts.count_place },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.posts, "count_place", $event.target.value)
+            }
+          }
+        }),
+        _vm._v(" "),
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.posts.kg,
+              expression: "posts.kg"
+            }
+          ],
+          attrs: { type: "text" },
+          domProps: { value: _vm.posts.kg },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.posts, "kg", $event.target.value)
+            }
+          }
+        }),
+        _vm._v(" "),
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.posts.fax_name,
+              expression: "posts.fax_name"
+            }
+          ],
+          attrs: { type: "text" },
+          domProps: { value: _vm.posts.fax_name },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.posts, "fax_name", $event.target.value)
+            }
+          }
+        }),
+        _vm._v(" "),
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.posts.notation,
+              expression: "posts.notation"
+            }
+          ],
+          attrs: { type: "text" },
+          domProps: { value: _vm.posts.notation },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.posts, "notation", $event.target.value)
+            }
+          }
+        })
+      ]
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-955599be", module.exports)
+  }
+}
+
+/***/ }),
+/* 69 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            table: "cargos",
+            posts: [],
+            clients: [],
+            client: null,
+            clientID: null,
+            typeTable: null,
+            notification: null,
+            url: "http://cargo.site/"
+        };
+    },
+    created: function created() {
+        var _this = this;
+
+        Axios.get(this.url + "api/cargos/" + this.$route.params.id).then(function (response) {
+            return response.data;
+        }).then(function (response) {
+            _this.posts = response.data;
+        });
+        Axios.get(this.url + "api/clients").then(function (response) {
+            return response.data;
+        }).then(function (response) {
+            _this.clients = response.data;
+        });
+    },
+
+    methods: {
+        formatDate: function formatDate(date) {
+            var data = new Date(date);
+            var dd = data.getDate();
+            if (dd < 10) dd = "0" + dd;
+            var mm = data.getMonth() + 1;
+            if (mm < 10) mm = "0" + mm;
+            var yy = data.getFullYear() % 100;
+            if (yy < 10) yy = "0" + yy;
+            return dd + "." + mm + "." + yy;
+        },
+        changeClientNameToID: function changeClientNameToID() {
+            var _this2 = this;
+
+            this.clients.forEach(function (element) {
+                if (_this2.search.client == 'Все') {
+                    _this2.search.clientID = null;
+                }
+                if (element.name == _this2.search.client) {
+                    _this2.search.clientID = element.id;
+                }
+            });
+        }
+    }
+});
 
 /***/ })
 /******/ ]);

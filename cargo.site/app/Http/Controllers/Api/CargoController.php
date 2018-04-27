@@ -17,7 +17,7 @@ class CargoController extends Controller
 
     public function show($id)
     {
-        return new CargoResource(Cargo::find($id));
+        return new CargoResource(Cargo::findOrFail($id));
     }
 
     public function search(Request $request)

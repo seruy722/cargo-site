@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use App\Debt;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DebtResource;
+use Illuminate\Http\Request;
 
 class DebtController extends Controller
 {
@@ -21,8 +22,9 @@ class DebtController extends Controller
 
     public function show($id)
     {
-        return new DebtResource(Debt::find($id));
+        return new DebtResource(Debt::findOrFail($id));
     }
+
     public function search(Request $request)
     {
         $key = $request->keyword;
@@ -50,6 +52,7 @@ class DebtController extends Controller
         return DebtResource::collection($data);
 
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -63,7 +66,7 @@ class DebtController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -75,7 +78,7 @@ class DebtController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -86,8 +89,8 @@ class DebtController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -98,7 +101,7 @@ class DebtController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
