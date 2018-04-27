@@ -100,6 +100,7 @@ class CargoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Cargo::destroy($id);
+        return 'Запись удалена!';
     }
 }

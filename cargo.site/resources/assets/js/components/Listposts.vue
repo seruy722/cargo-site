@@ -83,9 +83,9 @@
                                      v-bind:to="{name:'Editpost',params:{id:post.id}}">
 
                         </router-link>
-                        <router-link class="btn btn-sm btn-danger glyphicon glyphicon-remove"
-                                     v-bind:to="{name:'Deletepost',params:{id:post.id}}">
-                        </router-link>
+                        <button class="btn btn-sm btn-danger glyphicon glyphicon-remove"
+                                     @click="desroyEntry(post.id)">
+                        </button>
                     </td>
                 </tr>
                 </tbody>
@@ -139,6 +139,7 @@
                 table: "cargos",
                 posts: [],
                 clients: [],
+                notification:null,
                 url: "http://cargo.site/",
                 search: {
                     typeTable: null,
@@ -265,6 +266,12 @@
                     };
                 }
                 this.excel.excelData = this.posts;
+            },
+            desroyEntry(id){
+                Axios.delete(this.url + "api/cargos/"+id).then(response => {
+                    this.fetchSearch();
+                    console.log(response.data);
+                });
             },
             change() {
                 console.log(this.button);

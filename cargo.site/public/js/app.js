@@ -46592,6 +46592,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             table: "cargos",
             posts: [],
             clients: [],
+            notification: null,
             url: "http://cargo.site/",
             search: {
                 typeTable: null,
@@ -46731,6 +46732,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 };
             }
             this.excel.excelData = this.posts;
+        },
+        desroyEntry: function desroyEntry(id) {
+            var _this5 = this;
+
+            Axios.delete(this.url + "api/cargos/" + id).then(function (response) {
+                _this5.fetchSearch();
+                console.log(response.data);
+            });
         },
         change: function change() {
             console.log(this.button);
@@ -47041,11 +47050,13 @@ var render = function() {
                           }
                         }),
                         _vm._v(" "),
-                        _c("router-link", {
+                        _c("button", {
                           staticClass:
                             "btn btn-sm btn-danger glyphicon glyphicon-remove",
-                          attrs: {
-                            to: { name: "Deletepost", params: { id: post.id } }
+                          on: {
+                            click: function($event) {
+                              _vm.desroyEntry(post.id)
+                            }
                           }
                         })
                       ],
