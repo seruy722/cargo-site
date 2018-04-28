@@ -24,6 +24,7 @@ class CargoController extends Controller
     {
         $key = $request->keyword;
         $type = $request->typeTable;
+//        dd($type);
         if ($request->dateStart) {
             $dateStart = date('Y-m-d', strtotime($request->dateStart));
         } else {

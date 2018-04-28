@@ -10,7 +10,7 @@
                 <div class="col-md-3">
                     <span class="glyphicon glyphicon-user"></span>
                     <input list="client" v-model="search.client" @change="$event.target.select();fetchSearch()"
-                           @click="$event.target.select()" autofocus>
+                           @click="$event.target.select()">
                     <datalist id="client">
                         <option value="Все">0</option>
                         <option v-for="(client,index) in clients" :key="index" v-bind:value="client.name">{{client.id}}
@@ -27,7 +27,7 @@
                 <div class="col-md-2">
                     <span class="glyphicon glyphicon-th-list"></span>
                     <select class="list-group" v-model="search.typeTable" @change="fetchSearch()">
-                        <option value="">Все</option>
+                        <option v-bind:value="null">Все</option>
                         <option value="Оплата">ОПЛАТА</option>
                         <option value="Долг">ДОЛГ</option>
                     </select>
@@ -174,32 +174,18 @@
                     this.search.countPlace = 0;
                     this.search.kg = 0;
                     this.search.commission = 0;
-                    let arrayForPosts = [];
                     this.posts.forEach(element => {
                         this.search.price += element["price"];
                         this.search.countPlace += element["count_place"];
                         this.search.kg += element["kg"];
                         this.search.commission += element["commission"];
-                        element.created_at = this.formatDate(element.created_at.date);
-                        arrayForPosts.push(element);
                     });
-                    this.posts = arrayForPosts;
                     this.prepareDataToExcel();
                     return this.posts;
                 }
             }
         },
         methods: {
-            formatDate(date) {
-                let data = new Date(date);
-                let dd = data.getDate();
-                if (dd < 10) dd = "0" + dd;
-                let mm = data.getMonth() + 1;
-                if (mm < 10) mm = "0" + mm;
-                let yy = data.getFullYear() % 100;
-                if (yy < 10) yy = "0" + yy;
-                return dd + "." + mm + "." + yy;
-            },
             changeClientNameToID() {
                 this.clients.forEach(element => {
                     if (this.search.client == 'Все') {
