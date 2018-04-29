@@ -3,72 +3,30 @@
         <h3>Редактирование записи</h3>
         <form v-on:submit.prevent="updatePost">
             <div class="form-row">
-                <div class="col-md-4 mb-3">
-                    <label for="validationDefault01">First name</label>
-                    <input type="text" class="form-control" id="validationDefault01" placeholder="First name"
-                           value="Mark" required>
+                <div class="col-md-3 form-group">
+                    <label>Дата</label>
+                    <input type="date" class="form-control" v-model="post.created_at">
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="validationDefault02">Last name</label>
-                    <input type="text" class="form-control" id="validationDefault02" placeholder="Last name"
-                           value="Otto" required>
+                <div class="col-md-3 form-group">
+                    <label class="col-form-label">Тип</label>
+                    <input type="text" class="form-control" v-model="post.type" disabled>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="validationDefaultUsername">Username</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroupPrepend2">@</span>
-                        </div>
-                        <input type="text" class="form-control" id="validationDefaultUsername" placeholder="Username"
-                               aria-describedby="inputGroupPrepend2" required>
-                    </div>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="col-md-6 mb-3">
-                    <label for="validationDefault03">City</label>
-                    <input type="text" class="form-control" id="validationDefault03" placeholder="City" required>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="validationDefault04">State</label>
-                    <input type="text" class="form-control" id="validationDefault04" placeholder="State" required>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="validationDefault05">Zip</label>
-                    <input type="text" class="form-control" id="validationDefault05" placeholder="Zip" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck2" required>
-                    <label class="form-check-label" for="invalidCheck2">
-                        Agree to terms and conditions
-                    </label>
-                </div>
-            </div>
-            <button class="btn btn-primary" type="submit" @click="change()">Submit form</button>
-            <div class="form-row">
-                <div class="col-md-4 form-group">
-                    <label col-form-label>Дата</label>
-                    <input type="date" class="form-control" v-model="posts.created_at">
-                </div>
-                <div class="col-md-4 form-group">
-                    <label col-form-label>Тип</label>
-                    <input type="text" class="form-control" v-model="posts.type" disabled>
-                </div>
-                <div class="col-md-2 form-group">
-                    <span class="glyphicon glyphicon-th-list"></span>
-                    <select class="list-group" v-model="table">
+                <div class="col-md-3 form-group">
+                    <label for="">Таблица</label>
+                    <select class="form-control" v-model="table">
                         <option value="cargos">КАРГО</option>
                         <option value="debts">ДОЛГИ</option>
                     </select>
                 </div>
-                <div class="col-md-2 form-group">
-                    <input type="text" v-model="posts.price" class="form-control">
+                <div class="col-md-3 form-group">
+                    <label for="">Сумма</label>
+                    <input type="text" v-model="post.price" class="form-control">
                 </div>
-                <div class="col-md-2 form-group">
-                    <span class="glyphicon glyphicon-user"></span>
-                    <input list="client" v-model="posts.client_name" @change="$event.target.select()"
+            </div>
+            <div class="form-row">
+                <div class="col-md-3 form-group">
+                    <label for="">Клиент</label>
+                    <input list="client" v-model="post.client_name" @change="$event.target.select()"
                            @click="$event.target.select()" class="form-control">
                     <datalist id="client">
                         <option value="Все" selected>0</option>
@@ -76,20 +34,29 @@
                         </option>
                     </datalist>
                 </div>
-                <div class="col-md-2 form-group">
-                    <input type="text" v-model="posts.count_place" class="form-control">
+                <div class="col-md-3 form-group">
+                    <label for="">Мест</label>
+                    <input type="text" v-model="post.count_place" class="form-control">
                 </div>
-                <div class="col-md-1 form-group">
-                    <input type="text" v-model="posts.kg" class="form-control">
+                <div class="col-md-3 form-group">
+                    <label for="">Вес</label>
+                    <input type="text" v-model="post.kg" class="form-control">
                 </div>
-                <div class="col-md-1 form-group">
-                    <input type="text" v-model="posts.fax_name" class="form-control">
-                </div>
-                <div class="col form-group">
-                    <input type="text" v-model="posts.notation" class="form-control">
+                <div class="col-md-3 form-group">
+                    <label for="">Факс</label>
+                    <input type="text" v-model="post.fax_name" class="form-control">
                 </div>
             </div>
+            <div class="form-row">
+                <div class="col-md-12 form-group">
+                    <label for="">Примечания</label>
+                    <input type="text" v-model="post.notation" class="form-control">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success">Обновить</button>
+            <router-link class="btn btn-warning" v-bind:to="'/'">Отмена</router-link>
         </form>
+        <button @click="change()">Show</button>
     </div>
 </template>
 
@@ -98,7 +65,7 @@
         data() {
             return {
                 table: "cargos",
-                posts: [],
+                post: [],
                 clients: [],
                 url: "http://cargo.site/"
             };
@@ -106,8 +73,8 @@
         created() {
             Axios.get(this.url + "api/cargos/" + this.$route.params.id).then(response => response.data).then(response => {
                 let data = response.data;
-                data.created_at = this.formatDate(data.created_at.date);
-                this.posts = data;
+                data.created_at = data.created_at.split("-").reverse().join("-");
+                this.post = data;
             });
             Axios.get(this.url + "api/clients").then(response => response.data).then(response => {
                 this.clients = response.data;
@@ -123,18 +90,21 @@
                 let yy = data.getFullYear();
                 return yy + "-" + mm + "-" + dd;
             },
+            updatePost() {
+                this.changeClientNameToID();
+                Axios.patch(this.url + "api/" + this.table + "/" + this.$route.params.id, this.post).then(() => {
+                    this.$router.push({name: "Listposts"});
+                });
+            },
             changeClientNameToID() {
                 this.clients.forEach(element => {
-                    if (this.search.client == 'Все') {
-                        this.search.clientID = null;
-                    }
-                    if (element.name == this.search.client) {
-                        this.search.clientID = element.id;
+                    if (this.post.client_name === element.name) {
+                        this.post.client_id = element.id;
                     }
                 });
             },
             change() {
-                console.log(this.posts);
+                console.log(this.post);
             }
         }
     };

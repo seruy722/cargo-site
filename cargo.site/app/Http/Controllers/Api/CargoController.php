@@ -90,7 +90,13 @@ class CargoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $post = Cargo::find($id);
+        if ($post->count()) {
+            $post->update($request->all());
+            return response()->json(['status' => 'success', 'msg' => 'Запись успешно обновлена']);
+        } else {
+            return response()->json(['status' => 'error', 'msg' => 'Ошибка при обновлении записи']);
+        }
     }
 
     /**
@@ -101,7 +107,13 @@ class CargoController extends Controller
      */
     public function destroy($id)
     {
-        Cargo::destroy($id);
-        return 'Запись удалена!';
+        $post = Cargo::find($id);
+        if ($post->count()) {
+            $post->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Запись успешно удалена']);
+        } else {
+            return response()->json(['status' => 'error', 'msg' => 'Ошибка при удалении записи']);
+        }
+
     }
 }

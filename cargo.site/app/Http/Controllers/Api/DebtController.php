@@ -106,6 +106,12 @@ class DebtController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Debt::find($id);
+        if($post->count()){
+            $post->delete();
+            return response()->json(['status'=>'success','msg'=>'Запись успешно удалена']);
+        }else{
+            return response()->json(['status'=>'error','msg'=>'Ошибка при удалении записи']);
+        }
     }
 }

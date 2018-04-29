@@ -198,27 +198,15 @@
             },
             fetchSearch() {
                 this.changeClientNameToID();
-                if (this.table === "cargos") {
-                    Axios.post(this.url + "api/search/cargos", {
-                        keyword: this.search.clientID,
-                        dateStart: this.search.dateStart,
-                        dateLast: this.search.dateLast,
-                        table: this.table,
-                        typeTable: this.search.typeTable
-                    }).then(response => response.data).then(response => {
-                        this.posts = response.data;
-                    });
-                } else {
-                    Axios.post(this.url + "api/search/debts", {
-                        keyword: this.search.clientID,
-                        dateStart: this.search.dateStart,
-                        dateLast: this.search.dateLast,
-                        table: this.table,
-                        typeTable: this.search.typeTable
-                    }).then(response => response.data).then(response => {
-                        this.posts = response.data;
-                    });
-                }
+                Axios.post(this.url + "api/search/" + this.table, {
+                    keyword: this.search.clientID,
+                    dateStart: this.search.dateStart,
+                    dateLast: this.search.dateLast,
+                    table: this.table,
+                    typeTable: this.search.typeTable
+                }).then(response => response.data).then(response => {
+                    this.posts = response.data;
+                });
             },
             prepareDataToExcel() {
                 this.excel.excelData = [];
@@ -248,7 +236,7 @@
             desroyEntry(id) {
                 let answer = confirm('Удалить запись?');
                 if (answer) {
-                    Axios.delete(this.url + "api/cargos/" + id).then(response => {
+                    Axios.delete(this.url + "api/" + this.table + "/" + id).then(response => {
                         this.fetchSearch();
                         this.notification = response.data;
                     });
