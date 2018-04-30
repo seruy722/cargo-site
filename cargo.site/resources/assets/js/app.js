@@ -5,8 +5,11 @@ window.VueRouter = require('vue-router').default;
 window.VueAxios = require('vue-axios').default;
 window.Axios = require('axios').default;
 window.JsonExcel = require('vue-json-excel');
+// window.Vuex = require('vuex');
+import {store} from './store/store';
 Vue.component('downloadExcel', JsonExcel);
 
+Vue.config.productionTip = false;
 
 let AppLayout = require('./components/App.vue');
 
@@ -17,7 +20,7 @@ const Editpost = Vue.component('Editpost', require('./components/Editpost.vue'))
 const Viewpost = Vue.component('Viewpost', require('./components/Viewpost.vue'));
 
 
-Vue.use(VueRouter, VueAxios, axios);
+Vue.use(VueRouter, VueAxios, Axios);
 
 const routes = [
     {
@@ -56,6 +59,7 @@ new Vue(
     Vue.util.extend({
             router
         },
-        AppLayout
+        AppLayout,
+        store
     )
 ).$mount('#app');

@@ -4,12 +4,12 @@
             <div class="row">
                 <div class="col-md-4">
                     <span class="glyphicon glyphicon-calendar"></span>
-                    <input type="date" @change="fetchSearch" v-model="search.dateStart">
-                    <input type="date" @change="fetchSearch" v-model="search.dateLast">
+                    <input type="date" @change="fetchSearch()" v-model="search.dateStart">
+                    <input type="date" @change="fetchSearch()" v-model="search.dateLast">
                 </div>
                 <div class="col-md-3">
                     <span class="glyphicon glyphicon-user"></span>
-                    <input list="client" v-model="search.client" @change="$event.target.select();fetchSearch"
+                    <input list="client" v-model="search.client" @change="$event.target.select();fetchSearch()"
                            @click="$event.target.select()">
                     <datalist id="client">
                         <option value="Все">0</option>
@@ -19,14 +19,14 @@
                 </div>
                 <div class="col-md-2">
                     <span class="glyphicon glyphicon-th-list"></span>
-                    <select class="list-group" v-model="table" @change="fetchSearch">
+                    <select class="list-group" v-model="table" @change="fetchSearch()">
                         <option value="cargos">КАРГО</option>
                         <option value="debts">ДОЛГИ</option>
                     </select>
                 </div>
                 <div class="col-md-2">
                     <span class="glyphicon glyphicon-th-list"></span>
-                    <select class="list-group" v-model="search.typeTable" @change="fetchSearch">
+                    <select class="list-group" v-model="search.typeTable" @change="fetchSearch()">
                         <option v-bind:value="null">Все</option>
                         <option value="Оплата">ОПЛАТА</option>
                         <option value="Долг">ДОЛГ</option>
@@ -37,13 +37,15 @@
                             class="btn btn-success"
                             :data='excel.excelData'
                             :fields="excel.jsonFields"
-                            :name="search.clientID">
+                            :meta="excel.jsonMeta"
+                            :name="search.client">
                         Excel
                     </download-excel>
                     <br><br>
                 </div>
             </div>
         </div>
+        <!--<h3>{{msg}}</h3>-->
         <div v-if="this.table==='cargos'">
             <div v-if="this.posts.length">
                 <span>Сумма: {{search.price}}</span>|
@@ -125,6 +127,14 @@
 </template>
 
 <script>
+    // const store = new Vuex.Store({
+    //     state: {
+    //         message:'Hello Vuex'
+    //     },
+    //     mutations: {},
+    //     actions: {},
+    //     getters: {}
+    // });
     export default {
         data() {
             return {
@@ -168,7 +178,10 @@
             });
         },
         computed: {
-            filteredPosts: function () {
+            msg(){
+                return this.$store.state.count;
+            },
+            filteredPosts() {
                 if (this.posts.length) {
                     this.search.price = 0;
                     this.search.countPlace = 0;
