@@ -57,9 +57,9 @@ const router = new VueRouter({
 
 new Vue(
     Vue.util.extend({
-            router
+            router,
+            store
         },
-        AppLayout,
-        store
+        AppLayout
     )
 ).$mount('#app');

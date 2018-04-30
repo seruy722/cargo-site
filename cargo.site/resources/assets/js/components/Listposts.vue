@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-md-2">
                     <span class="glyphicon glyphicon-th-list"></span>
-                    <select class="list-group" v-model="table" @change="fetchSearch()">
+                    <select class="list-group" v-model="anotherTable" @change="changeTable()">
                         <option value="cargos">КАРГО</option>
                         <option value="debts">ДОЛГИ</option>
                     </select>
@@ -44,13 +44,13 @@
                     <br><br>
                 </div>
             </div>
+            <h3>{{$store.state.calculated.price}}</h3>
         </div>
-        <!--<h3>{{msg}}</h3>-->
         <div v-if="this.table==='cargos'">
             <div v-if="this.posts.length">
-                <span>Сумма: {{search.price}}</span>|
-                <span>Кол. мест: {{search.countPlace}}</span>|
-                <span>Вес: {{search.kg}}</span>
+                <span>Сумма: {{totalPrice}}</span>|
+                <span>Кол. мест: {{totalPlace}}</span>|
+                <span>Вес: {{totalKg}}</span>
             </div>
             <table class="table table-bordered">
                 <thead>
@@ -68,7 +68,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(post, i) in filteredPosts" :key="post.id"
+                <tr v-for="(post, i) in posts" :key="post.id"
                     v-bind:class="{'danger':post.type=='Долг','success':post.type=='Оплата'}">
                     <td>{{i + 1}}</td>
                     <td v-for="(element,index) in post" :key="element.id" v-if="index!='id'">{{element}}</td>
@@ -88,8 +88,8 @@
         </div>
         <div v-if="this.table==='debts'">
             <div v-if="this.posts.length">
-                <span>Сумма: {{search.price}}</span>|
-                <span>Комиссия: {{search.commission}}</span>
+                <span>Сумма: {{totalPrice}}</span>|
+                <span>Комиссия: {{totalCommission}}</span>
             </div>
             <table class="table table-bordered">
                 <thead>
@@ -105,7 +105,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(post, i) in filteredPosts" :key="post.id"
+                <tr v-for="(post, i) in posts" :key="post.id"
                     v-bind:class="{'danger':post.type==='Долг','success':post.type==='Оплата'}">
                     <td>{{i + 1}}</td>
                     <td v-for="(element,index) in post" :key="element.id" v-if="index!='id'">{{element}}</td>
@@ -122,27 +122,17 @@
             </table>
             <div v-if="!this.posts.length">Нет записей</div>
         </div>
-
     </div>
 </template>
 
 <script>
-    // const store = new Vuex.Store({
-    //     state: {
-    //         message:'Hello Vuex'
-    //     },
-    //     mutations: {},
-    //     actions: {},
-    //     getters: {}
-    // });
+    import {mapGetters, mapMutations, mapState,mapActions} from 'vuex';
+
     export default {
         data() {
             return {
-                table: "cargos",
-                posts: [],
-                clients: [],
+                anotherTable: '',
                 notification: null,
-                url: "http://cargo.site/",
                 search: {
                     typeTable: null,
                     client: null,
@@ -171,34 +161,55 @@
         },
         created() {
             Axios.get(this.url + "api/" + this.table).then(response => response.data).then(response => {
-                this.posts = response.data;
+                this.addPosts(response.data);
             });
             Axios.get(this.url + "api/clients").then(response => response.data).then(response => {
-                this.clients = response.data;
+                this.addClients(response.data);
             });
         },
         computed: {
-            msg(){
-                return this.$store.state.count;
-            },
-            filteredPosts() {
-                if (this.posts.length) {
-                    this.search.price = 0;
-                    this.search.countPlace = 0;
-                    this.search.kg = 0;
-                    this.search.commission = 0;
-                    this.posts.forEach(element => {
-                        this.search.price += element["price"];
-                        this.search.countPlace += element["count_place"];
-                        this.search.kg += element["kg"];
-                        this.search.commission += element["commission"];
-                    });
-                    this.prepareDataToExcel();
-                    return this.posts;
-                }
-            }
+            // filteredPosts() {
+            //     if (this.posts.length) {
+            //         this.search.price = 0;
+            //         this.search.countPlace = 0;
+            //         this.search.kg = 0;
+            //         this.search.commission = 0;
+            //         this.posts.forEach(element => {
+            //             this.search.price += element["price"];
+            //             this.search.countPlace += element["count_place"];
+            //             this.search.kg += element["kg"];
+            //             this.search.commission += element["commission"];
+            //         });
+            //         this.prepareDataToExcel();
+            //         return this.posts;
+            //     }
+            // }
+            ...mapState([
+                'table',
+                'posts',
+                'clients',
+                'url'
+            ]),
+            ...mapGetters([
+                'totalPrice',
+                'totalPlace',
+                'totalKg',
+                'totalCommission'
+            ]),
         },
         methods: {
+            ...mapMutations([
+                'addPosts',
+                'addClients',
+                'CHANGE_TABLE'
+            ]),
+            changeTable() {
+                this.CHANGE_TABLE(this.anotherTable);
+                this.fetchSearch();
+            },
+            ...mapActions([
+                'totalCalculated'
+            ]),
             changeClientNameToID() {
                 this.clients.forEach(element => {
                     if (this.search.client == 'Все') {
@@ -218,8 +229,9 @@
                     table: this.table,
                     typeTable: this.search.typeTable
                 }).then(response => response.data).then(response => {
-                    this.posts = response.data;
+                    this.addPosts(response.data);
                 });
+                this.totalCalculated();
             },
             prepareDataToExcel() {
                 this.excel.excelData = [];
