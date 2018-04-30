@@ -4,12 +4,12 @@
             <div class="row">
                 <div class="col-md-4">
                     <span class="glyphicon glyphicon-calendar"></span>
-                    <input type="date" @change="fetchSearch()" v-model="search.dateStart">
-                    <input type="date" @change="fetchSearch()" v-model="search.dateLast">
+                    <input type="date" @change="fetchSearch" v-model="search.dateStart">
+                    <input type="date" @change="fetchSearch" v-model="search.dateLast">
                 </div>
                 <div class="col-md-3">
                     <span class="glyphicon glyphicon-user"></span>
-                    <input list="client" v-model="search.client" @change="$event.target.select();fetchSearch()"
+                    <input list="client" v-model="search.client" @change="$event.target.select();fetchSearch"
                            @click="$event.target.select()">
                     <datalist id="client">
                         <option value="Все">0</option>
@@ -19,14 +19,14 @@
                 </div>
                 <div class="col-md-2">
                     <span class="glyphicon glyphicon-th-list"></span>
-                    <select class="list-group" v-model="table" @change="fetchSearch()">
+                    <select class="list-group" v-model="table" @change="fetchSearch">
                         <option value="cargos">КАРГО</option>
                         <option value="debts">ДОЛГИ</option>
                     </select>
                 </div>
                 <div class="col-md-2">
                     <span class="glyphicon glyphicon-th-list"></span>
-                    <select class="list-group" v-model="search.typeTable" @change="fetchSearch()">
+                    <select class="list-group" v-model="search.typeTable" @change="fetchSearch">
                         <option v-bind:value="null">Все</option>
                         <option value="Оплата">ОПЛАТА</option>
                         <option value="Долг">ДОЛГ</option>
@@ -160,7 +160,7 @@
             };
         },
         created() {
-            Axios.get(this.url + "api/cargos").then(response => response.data).then(response => {
+            Axios.get(this.url + "api/" + this.table).then(response => response.data).then(response => {
                 this.posts = response.data;
             });
             Axios.get(this.url + "api/clients").then(response => response.data).then(response => {

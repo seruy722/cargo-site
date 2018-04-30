@@ -9,7 +9,11 @@
                 </div>
                 <div class="col-md-3 form-group">
                     <label class="col-form-label">Тип</label>
-                    <input type="text" class="form-control" v-model="post.type" disabled>
+                    <select class="list-group" v-model="post.type">
+                        <option>Все</option>
+                        <option value="Оплата">ОПЛАТА</option>
+                        <option value="Долг">ДОЛГ</option>
+                    </select>
                 </div>
                 <div class="col-md-3 form-group">
                     <label for="">Таблица</label>
@@ -53,7 +57,7 @@
                     <input type="text" v-model="post.notation" class="form-control">
                 </div>
             </div>
-            <button type="submit" class="btn btn-success">Обновить</button>
+            <button type="submit" class="btn btn-success">Сохранить</button>
             <router-link class="btn btn-warning" v-bind:to="'/'">Отмена</router-link>
         </form>
         <button @click="change()">Show</button>
@@ -71,7 +75,7 @@
             };
         },
         created() {
-            Axios.get(this.url + "api/cargos/" + this.$route.params.id).then(response => response.data).then(response => {
+            Axios.get(this.url + "api/" + this.table + "/" + this.$route.params.id).then(response => response.data).then(response => {
                 let data = response.data;
                 data.created_at = data.created_at.split("-").reverse().join("-");
                 this.post = data;
@@ -81,15 +85,6 @@
             });
         },
         methods: {
-            formatDate(date) {
-                let data = new Date(date);
-                let dd = data.getDate();
-                if (dd < 10) dd = "0" + dd;
-                let mm = data.getMonth() + 1;
-                if (mm < 10) mm = "0" + mm;
-                let yy = data.getFullYear();
-                return yy + "-" + mm + "-" + dd;
-            },
             updatePost() {
                 this.changeClientNameToID();
                 Axios.patch(this.url + "api/" + this.table + "/" + this.$route.params.id, this.post).then(() => {

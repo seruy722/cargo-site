@@ -46611,7 +46611,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     created: function created() {
         var _this = this;
 
-        Axios.get(this.url + "api/cargos").then(function (response) {
+        Axios.get(this.url + "api/" + this.table).then(function (response) {
             return response.data;
         }).then(function (response) {
             _this.posts = response.data;
@@ -46740,9 +46740,7 @@ var render = function() {
             attrs: { type: "date" },
             domProps: { value: _vm.search.dateStart },
             on: {
-              change: function($event) {
-                _vm.fetchSearch()
-              },
+              change: _vm.fetchSearch,
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -46764,9 +46762,7 @@ var render = function() {
             attrs: { type: "date" },
             domProps: { value: _vm.search.dateLast },
             on: {
-              change: function($event) {
-                _vm.fetchSearch()
-              },
+              change: _vm.fetchSearch,
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -46794,7 +46790,7 @@ var render = function() {
             on: {
               change: function($event) {
                 $event.target.select()
-                _vm.fetchSearch()
+                _vm.fetchSearch
               },
               click: function($event) {
                 $event.target.select()
@@ -46856,9 +46852,7 @@ var render = function() {
                       ? $$selectedVal
                       : $$selectedVal[0]
                   },
-                  function($event) {
-                    _vm.fetchSearch()
-                  }
+                  _vm.fetchSearch
                 ]
               }
             },
@@ -46902,9 +46896,7 @@ var render = function() {
                       $event.target.multiple ? $$selectedVal : $$selectedVal[0]
                     )
                   },
-                  function($event) {
-                    _vm.fetchSearch()
-                  }
+                  _vm.fetchSearch
                 ]
               }
             },
@@ -47328,6 +47320,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -47341,7 +47337,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     created: function created() {
         var _this = this;
 
-        Axios.get(this.url + "api/cargos/" + this.$route.params.id).then(function (response) {
+        Axios.get(this.url + "api/" + this.table + "/" + this.$route.params.id).then(function (response) {
             return response.data;
         }).then(function (response) {
             var data = response.data;
@@ -47356,15 +47352,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     methods: {
-        formatDate: function formatDate(date) {
-            var data = new Date(date);
-            var dd = data.getDate();
-            if (dd < 10) dd = "0" + dd;
-            var mm = data.getMonth() + 1;
-            if (mm < 10) mm = "0" + mm;
-            var yy = data.getFullYear();
-            return yy + "-" + mm + "-" + dd;
-        },
         updatePost: function updatePost() {
             var _this2 = this;
 
@@ -47440,27 +47427,46 @@ var render = function() {
           _c("div", { staticClass: "col-md-3 form-group" }, [
             _c("label", { staticClass: "col-form-label" }, [_vm._v("Тип")]),
             _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.post.type,
-                  expression: "post.type"
-                }
-              ],
-              staticClass: "form-control",
-              attrs: { type: "text", disabled: "" },
-              domProps: { value: _vm.post.type },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.post.type,
+                    expression: "post.type"
                   }
-                  _vm.$set(_vm.post, "type", $event.target.value)
+                ],
+                staticClass: "list-group",
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.$set(
+                      _vm.post,
+                      "type",
+                      $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                    )
+                  }
                 }
-              }
-            })
+              },
+              [
+                _c("option", [_vm._v("Все")]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "Оплата" } }, [
+                  _vm._v("ОПЛАТА")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "Долг" } }, [_vm._v("ДОЛГ")])
+              ]
+            )
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "col-md-3 form-group" }, [
@@ -47691,7 +47697,7 @@ var render = function() {
         _c(
           "button",
           { staticClass: "btn btn-success", attrs: { type: "submit" } },
-          [_vm._v("Обновить")]
+          [_vm._v("Сохранить")]
         ),
         _vm._v(" "),
         _c(
