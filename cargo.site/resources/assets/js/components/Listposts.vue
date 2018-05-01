@@ -140,10 +140,6 @@
                     dateStart: null,
                     dateLast: null,
                     selected: [],
-                    price: 0,
-                    countPlace: 0,
-                    kg: 0,
-                    commission: 0
                 },
                 excel: {
                     jsonFields: {},
@@ -162,28 +158,13 @@
         created() {
             Axios.get(this.url + "api/" + this.table).then(response => response.data).then(response => {
                 this.addPosts(response.data);
+                this.totalCalculated();
             });
             Axios.get(this.url + "api/clients").then(response => response.data).then(response => {
                 this.addClients(response.data);
             });
         },
         computed: {
-            // filteredPosts() {
-            //     if (this.posts.length) {
-            //         this.search.price = 0;
-            //         this.search.countPlace = 0;
-            //         this.search.kg = 0;
-            //         this.search.commission = 0;
-            //         this.posts.forEach(element => {
-            //             this.search.price += element["price"];
-            //             this.search.countPlace += element["count_place"];
-            //             this.search.kg += element["kg"];
-            //             this.search.commission += element["commission"];
-            //         });
-            //         this.prepareDataToExcel();
-            //         return this.posts;
-            //     }
-            // }
             ...mapState([
                 'table',
                 'posts',

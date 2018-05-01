@@ -61,7 +61,11 @@ export const store = new Vuex.Store({
         CHANGE_TABLE: (state, table) => {
             state.table = table;
         },
-        TOTAL_CALCULATED: state => {
+        TOTAL_CALCULATED: (state) => {
+            state.calculated.price = 0;
+            state.calculated.countPlace = 0;
+            state.calculated.kg = 0;
+            state.calculated.commission = 0;
             state.posts.forEach(element => {
                 state.calculated.price += element["price"];
                 state.calculated.countPlace += element["count_place"];
@@ -71,8 +75,8 @@ export const store = new Vuex.Store({
         }
     },
     actions: {
-        totalCalculated:(context,element)=>{
-            context.commit('TOTAL_CALCULATED',element);
+        totalCalculated:context=>{
+            context.commit('TOTAL_CALCULATED');
         }
     }
 
