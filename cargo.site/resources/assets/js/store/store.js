@@ -3,81 +3,116 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-export const store = new Vuex.Store({
-    state: {
-        table: "cargos",
-        posts: [],
-        clients: [],
-        // notification: null,
-        url: "http://cargo.site/",
-        calculated: {
-            price: 0,
-            countPlace: 0,
-            kg: 0,
-            commission: 0
-        },
-        search: {
-            typeTable: null,
-            client: null,
-            clientID: null,
-            dateStart: null,
-            dateLast: null,
-            selected: []
-        },
-        excel: {
-            jsonFields: {},
-            excelData: [],
-            jsonMeta: [
-                [
-                    {
-                        key: "charset",
-                        value: "utf-8"
-                    }
-                ]
+const state = {
+    table: "cargos",
+    posts: [],
+    clients: [],
+    url: "http://cargo.site/",
+    notification:'',
+    search: {
+        typeTable: null,
+        client: null,
+        clientID: null,
+        dateStart: null,
+        dateLast: null
+    },
+    excel: {
+        jsonFields: {},
+        excelData: [],
+        jsonMeta: [
+            [
+                {
+                    key: "charset",
+                    value: "utf-8"
+                }
             ]
-        }
-    },
-    getters: {
-        totalPrice: state => {
-            return state.calculated.price;
-        },
-        totalPlace: state => {
-            return state.calculated.countPlace;
-        },
-        totalKg: state => {
-            return state.calculated.kg;
-        },
-        totalCommission: state => {
-            return state.calculated.commission;
-        }
-    },
-    mutations: {
-        addPosts: (state, posts) => {
-            state.posts = posts;
-        },
-        addClients: (state, clients) => {
-            state.clients = clients;
-        },
-        CHANGE_TABLE: (state, table) => {
-            state.table = table;
-        },
-        TOTAL_CALCULATED: (state) => {
-            state.calculated.price = 0;
-            state.calculated.countPlace = 0;
-            state.calculated.kg = 0;
-            state.calculated.commission = 0;
-            state.posts.forEach(element => {
-                state.calculated.price += element["price"];
-                state.calculated.countPlace += element["count_place"];
-                state.calculated.kg += element["kg"];
-                state.calculated.commission += element["commission"];
-            });
-        }
-    },
-    actions: {
-        totalCalculated:context=>{
-            context.commit('TOTAL_CALCULATED');
-        }
+        ]
     }
+};
+const getters = {
+    totalPrice: state => {
+        return state.posts.reduce((result, num) => result + num.price, 0);
+    },
+    totalPlace: state => {
+        let countPlace = state.posts.reduce((result, num) => result + num.count_place, 0);
+        return countPlace ? countPlace : 0;
+    },
+    totalKg: state => {
+        let kg = state.posts.reduce((result, num) => result + num.kg, 0);
+        return kg ? kg : 0;
+    },
+    totalCommission: state => {
+        let commission = state.posts.reduce((result, num) => result + num.commission, 0);
+        return commission ? commission : 0;
+    },
+    allClients: state => {
+        return state.clients;
+    }
+};
+const mutations = {
+    ADD_POSTS: (state, posts) => {
+        state.posts = posts;
+    },
+    ADD_CLIENTS: (state, clients) => {
+        state.clients = clients;
+    },
+    CHANGE_TABLE: state => {
+        state.table === 'cargos' ? state.table = 'debts' : state.table = 'cargos';
+    },
+    CHANGE_CLIENT_NAME_TO_ID: (state) => {
+        state.clients.forEach(element => {
+            if (state.search.client == 'Все') {
+                state.search.clientID = null;
+            }
+            if (element.name == state.search.client) {
+                state.search.clientID = element.id;
+            }
+        });
+    },
+    PREPARE_DATA_TO_EXCEL: (state) => {
+        if (state.table === "cargos") {
+            state.excel.jsonFields = {
+                Дата: "created_at",
+                Тип: "type",
+                Сумма: "price",
+                Пользователь: "client_name",
+                Мест: "count_place",
+                Вес: "kg",
+                Факс: "fax_name",
+                Примечания: "notation"
+            };
+        } else {
+            state.excel.jsonFields = {
+                Дата: "created_at",
+                Тип: "type",
+                Сумма: "price",
+                Пользователь: "client_name",
+                Комиссия: "commission",
+                Примечания: "notation"
+            };
+        }
+        state.excel.excelData = state.posts;
+    }
+};
 
+const actions = {
+    fetch: (context) => {
+        context.commit('CHANGE_CLIENT_NAME_TO_ID');
+        Axios.post(state.url + "api/search/" + state.table, {
+            keyword: state.search.clientID,
+            dateStart: state.search.dateStart,
+            dateLast: state.search.dateLast,
+            table: state.table,
+            typeTable: state.search.typeTable
+        }).then(response => response.data).then(response => {
+            context.commit('ADD_POSTS', response.data);
+        });
+        context.commit('PREPARE_DATA_TO_EXCEL');
+    }
+};
+export const store = new Vuex.Store({
+    state,
+    getters,
+    mutations,
+    actions
 });

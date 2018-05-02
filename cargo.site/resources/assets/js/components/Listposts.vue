@@ -13,13 +13,14 @@
                            @click="$event.target.select()">
                     <datalist id="client">
                         <option value="Все">0</option>
-                        <option v-for="(client,index) in clients" :key="index" v-bind:value="client.name">{{client.id}}
+                        <option v-for="(client,index) in allClients" :key="index" v-bind:value="client.name">
+                            {{client.id}}
                         </option>
                     </datalist>
                 </div>
                 <div class="col-md-2">
                     <span class="glyphicon glyphicon-th-list"></span>
-                    <select class="list-group" v-model="anotherTable" @change="changeTable()">
+                    <select class="list-group" @change="changeTable()">
                         <option value="cargos">КАРГО</option>
                         <option value="debts">ДОЛГИ</option>
                     </select>
@@ -44,7 +45,6 @@
                     <br><br>
                 </div>
             </div>
-            <h3>{{$store.state.calculated.price}}</h3>
         </div>
         <div v-if="this.table==='cargos'">
             <div v-if="this.posts.length">
@@ -126,130 +126,62 @@
 </template>
 
 <script>
-    import {mapGetters, mapMutations, mapState,mapActions} from 'vuex';
+    import {mapActions, mapGetters, mapMutations, mapState} from 'vuex';
 
     export default {
         data() {
             return {
-                anotherTable: '',
-                notification: null,
-                search: {
-                    typeTable: null,
-                    client: null,
-                    clientID: null,
-                    dateStart: null,
-                    dateLast: null,
-                    selected: [],
-                },
-                excel: {
-                    jsonFields: {},
-                    excelData: [],
-                    jsonMeta: [
-                        [
-                            {
-                                key: "charset",
-                                value: "utf-8"
-                            }
-                        ]
-                    ]
-                }
+
             };
         },
         created() {
-            Axios.get(this.url + "api/" + this.table).then(response => response.data).then(response => {
-                this.addPosts(response.data);
-                this.totalCalculated();
+            Axios.get(this.$store.state.url + "api/" + this.table).then(response => response.data).then(response => {
+                this.ADD_POSTS(response.data);
             });
-            Axios.get(this.url + "api/clients").then(response => response.data).then(response => {
-                this.addClients(response.data);
+            Axios.get(this.$store.state.url + "api/clients").then(response => response.data).then(response => {
+                this.ADD_CLIENTS(response.data);
             });
         },
         computed: {
             ...mapState([
                 'table',
                 'posts',
-                'clients',
-                'url'
+                'search',
+                'excel'
             ]),
             ...mapGetters([
                 'totalPrice',
                 'totalPlace',
                 'totalKg',
-                'totalCommission'
-            ]),
+                'totalCommission',
+                'allClients'
+            ])
         },
         methods: {
             ...mapMutations([
-                'addPosts',
-                'addClients',
-                'CHANGE_TABLE'
+                'ADD_POSTS',
+                'ADD_CLIENTS',
+                'CHANGE_TABLE',
+                'TOTAL_CALCULATED',
+                'CHANGE_CLIENT_NAME_TO_ID',
+                'PREPARE_DATA_TO_EXCEL'
+            ]),
+            ...mapActions([
+                'fetch'
             ]),
             changeTable() {
-                this.CHANGE_TABLE(this.anotherTable);
+                this.CHANGE_TABLE();
                 this.fetchSearch();
             },
-            ...mapActions([
-                'totalCalculated'
-            ]),
-            changeClientNameToID() {
-                this.clients.forEach(element => {
-                    if (this.search.client == 'Все') {
-                        this.search.clientID = null;
-                    }
-                    if (element.name == this.search.client) {
-                        this.search.clientID = element.id;
-                    }
-                });
-            },
             fetchSearch() {
-                this.changeClientNameToID();
-                Axios.post(this.url + "api/search/" + this.table, {
-                    keyword: this.search.clientID,
-                    dateStart: this.search.dateStart,
-                    dateLast: this.search.dateLast,
-                    table: this.table,
-                    typeTable: this.search.typeTable
-                }).then(response => response.data).then(response => {
-                    this.addPosts(response.data);
-                });
-                this.totalCalculated();
-            },
-            prepareDataToExcel() {
-                this.excel.excelData = [];
-                if (this.table === "cargos") {
-                    this.excel.jsonFields = {
-                        Дата: "created_at",
-                        Тип: "type",
-                        Сумма: "price",
-                        Пользователь: "client_name",
-                        Мест: "count_place",
-                        Вес: "kg",
-                        Факс: "fax_name",
-                        Примечания: "notation"
-                    };
-                } else {
-                    this.excel.jsonFields = {
-                        Дата: "created_at",
-                        Тип: "type",
-                        Сумма: "price",
-                        Пользователь: "client_name",
-                        Комиссия: "commission",
-                        Примечания: "notation"
-                    };
-                }
-                this.excel.excelData = this.posts;
+                this.fetch();
             },
             desroyEntry(id) {
-                let answer = confirm('Удалить запись?');
-                if (answer) {
+                if (confirm('Удалить запись?')) {
                     Axios.delete(this.url + "api/" + this.table + "/" + id).then(response => {
                         this.fetchSearch();
-                        this.notification = response.data;
                     });
                 }
-            },
-            change() {
-                console.log(this.button);
             }
         }
     };

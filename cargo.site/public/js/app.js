@@ -47271,79 +47271,124 @@ if (false) {
 
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
 
-var store = new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
-    state: {
-        table: "cargos",
-        posts: [],
-        clients: [],
-        // notification: null,
-        url: "http://cargo.site/",
-        calculated: {
-            price: 0,
-            countPlace: 0,
-            kg: 0,
-            commission: 0
-        },
-        search: {
-            typeTable: null,
-            client: null,
-            clientID: null,
-            dateStart: null,
-            dateLast: null,
-            selected: []
-        },
-        excel: {
-            jsonFields: {},
-            excelData: [],
-            jsonMeta: [[{
-                key: "charset",
-                value: "utf-8"
-            }]]
-        }
+var state = {
+    table: "cargos",
+    posts: [],
+    clients: [],
+    url: "http://cargo.site/",
+    notification: '',
+    search: {
+        typeTable: null,
+        client: null,
+        clientID: null,
+        dateStart: null,
+        dateLast: null
     },
-    getters: {
-        totalPrice: function totalPrice(state) {
-            return state.calculated.price;
-        },
-        totalPlace: function totalPlace(state) {
-            return state.calculated.countPlace;
-        },
-        totalKg: function totalKg(state) {
-            return state.calculated.kg;
-        },
-        totalCommission: function totalCommission(state) {
-            return state.calculated.commission;
-        }
-    },
-    mutations: {
-        addPosts: function addPosts(state, posts) {
-            state.posts = posts;
-        },
-        addClients: function addClients(state, clients) {
-            state.clients = clients;
-        },
-        CHANGE_TABLE: function CHANGE_TABLE(state, table) {
-            state.table = table;
-        },
-        TOTAL_CALCULATED: function TOTAL_CALCULATED(state) {
-            state.calculated.price = 0;
-            state.calculated.countPlace = 0;
-            state.calculated.kg = 0;
-            state.calculated.commission = 0;
-            state.posts.forEach(function (element) {
-                state.calculated.price += element["price"];
-                state.calculated.countPlace += element["count_place"];
-                state.calculated.kg += element["kg"];
-                state.calculated.commission += element["commission"];
-            });
-        }
-    },
-    actions: {
-        totalCalculated: function totalCalculated(context) {
-            context.commit('TOTAL_CALCULATED');
-        }
+    excel: {
+        jsonFields: {},
+        excelData: [],
+        jsonMeta: [[{
+            key: "charset",
+            value: "utf-8"
+        }]]
     }
+};
+var getters = {
+    totalPrice: function totalPrice(state) {
+        return state.posts.reduce(function (result, num) {
+            return result + num.price;
+        }, 0);
+    },
+    totalPlace: function totalPlace(state) {
+        var countPlace = state.posts.reduce(function (result, num) {
+            return result + num.count_place;
+        }, 0);
+        return countPlace ? countPlace : 0;
+    },
+    totalKg: function totalKg(state) {
+        var kg = state.posts.reduce(function (result, num) {
+            return result + num.kg;
+        }, 0);
+        return kg ? kg : 0;
+    },
+    totalCommission: function totalCommission(state) {
+        var commission = state.posts.reduce(function (result, num) {
+            return result + num.commission;
+        }, 0);
+        return commission ? commission : 0;
+    },
+    allClients: function allClients(state) {
+        return state.clients;
+    }
+};
+var mutations = {
+    ADD_POSTS: function ADD_POSTS(state, posts) {
+        state.posts = posts;
+    },
+    ADD_CLIENTS: function ADD_CLIENTS(state, clients) {
+        state.clients = clients;
+    },
+    CHANGE_TABLE: function CHANGE_TABLE(state) {
+        state.table === 'cargos' ? state.table = 'debts' : state.table = 'cargos';
+    },
+    CHANGE_CLIENT_NAME_TO_ID: function CHANGE_CLIENT_NAME_TO_ID(state) {
+        state.clients.forEach(function (element) {
+            if (state.search.client == 'Все') {
+                state.search.clientID = null;
+            }
+            if (element.name == state.search.client) {
+                state.search.clientID = element.id;
+            }
+        });
+    },
+    PREPARE_DATA_TO_EXCEL: function PREPARE_DATA_TO_EXCEL(state) {
+        if (state.table === "cargos") {
+            state.excel.jsonFields = {
+                Дата: "created_at",
+                Тип: "type",
+                Сумма: "price",
+                Пользователь: "client_name",
+                Мест: "count_place",
+                Вес: "kg",
+                Факс: "fax_name",
+                Примечания: "notation"
+            };
+        } else {
+            state.excel.jsonFields = {
+                Дата: "created_at",
+                Тип: "type",
+                Сумма: "price",
+                Пользователь: "client_name",
+                Комиссия: "commission",
+                Примечания: "notation"
+            };
+        }
+        state.excel.excelData = state.posts;
+    }
+};
 
+var actions = {
+    fetch: function fetch(context) {
+        context.commit('CHANGE_CLIENT_NAME_TO_ID');
+        Axios.post(state.url + "api/search/" + state.table, {
+            keyword: state.search.clientID,
+            dateStart: state.search.dateStart,
+            dateLast: state.search.dateLast,
+            table: state.table,
+            typeTable: state.search.typeTable
+        }).then(function (response) {
+            return response.data;
+        }).then(function (response) {
+            context.commit('ADD_POSTS', response.data);
+        });
+        context.commit('PREPARE_DATA_TO_EXCEL');
+    }
+};
+var store = new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
+    state: state,
+    getters: getters,
+    mutations: mutations,
+    actions: actions
 });
 
 /***/ }),
@@ -47628,117 +47673,40 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
-        return {
-            anotherTable: '',
-            notification: null,
-            search: {
-                typeTable: null,
-                client: null,
-                clientID: null,
-                dateStart: null,
-                dateLast: null,
-                selected: []
-            },
-            excel: {
-                jsonFields: {},
-                excelData: [],
-                jsonMeta: [[{
-                    key: "charset",
-                    value: "utf-8"
-                }]]
-            }
-        };
+        return {};
     },
     created: function created() {
         var _this = this;
 
-        Axios.get(this.url + "api/" + this.table).then(function (response) {
+        Axios.get(this.$store.state.url + "api/" + this.table).then(function (response) {
             return response.data;
         }).then(function (response) {
-            _this.addPosts(response.data);
-            _this.totalCalculated();
+            _this.ADD_POSTS(response.data);
         });
-        Axios.get(this.url + "api/clients").then(function (response) {
+        Axios.get(this.$store.state.url + "api/clients").then(function (response) {
             return response.data;
         }).then(function (response) {
-            _this.addClients(response.data);
+            _this.ADD_CLIENTS(response.data);
         });
     },
 
-    computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["e" /* mapState */])(['table', 'posts', 'clients', 'url']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */])(['totalPrice', 'totalPlace', 'totalKg', 'totalCommission'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["d" /* mapMutations */])(['addPosts', 'addClients', 'CHANGE_TABLE']), {
+    computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["e" /* mapState */])(['table', 'posts', 'search', 'excel']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */])(['totalPrice', 'totalPlace', 'totalKg', 'totalCommission', 'allClients'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["d" /* mapMutations */])(['ADD_POSTS', 'ADD_CLIENTS', 'CHANGE_TABLE', 'TOTAL_CALCULATED', 'CHANGE_CLIENT_NAME_TO_ID', 'PREPARE_DATA_TO_EXCEL']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */])(['fetch']), {
         changeTable: function changeTable() {
-            this.CHANGE_TABLE(this.anotherTable);
+            this.CHANGE_TABLE();
             this.fetchSearch();
-        }
-    }, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */])(['totalCalculated']), {
-        changeClientNameToID: function changeClientNameToID() {
-            var _this2 = this;
-
-            this.clients.forEach(function (element) {
-                if (_this2.search.client == 'Все') {
-                    _this2.search.clientID = null;
-                }
-                if (element.name == _this2.search.client) {
-                    _this2.search.clientID = element.id;
-                }
-            });
         },
         fetchSearch: function fetchSearch() {
-            var _this3 = this;
-
-            this.changeClientNameToID();
-            Axios.post(this.url + "api/search/" + this.table, {
-                keyword: this.search.clientID,
-                dateStart: this.search.dateStart,
-                dateLast: this.search.dateLast,
-                table: this.table,
-                typeTable: this.search.typeTable
-            }).then(function (response) {
-                return response.data;
-            }).then(function (response) {
-                _this3.addPosts(response.data);
-            });
-            this.totalCalculated();
-        },
-        prepareDataToExcel: function prepareDataToExcel() {
-            this.excel.excelData = [];
-            if (this.table === "cargos") {
-                this.excel.jsonFields = {
-                    Дата: "created_at",
-                    Тип: "type",
-                    Сумма: "price",
-                    Пользователь: "client_name",
-                    Мест: "count_place",
-                    Вес: "kg",
-                    Факс: "fax_name",
-                    Примечания: "notation"
-                };
-            } else {
-                this.excel.jsonFields = {
-                    Дата: "created_at",
-                    Тип: "type",
-                    Сумма: "price",
-                    Пользователь: "client_name",
-                    Комиссия: "commission",
-                    Примечания: "notation"
-                };
-            }
-            this.excel.excelData = this.posts;
+            this.fetch();
         },
         desroyEntry: function desroyEntry(id) {
-            var _this4 = this;
+            var _this2 = this;
 
-            var answer = confirm('Удалить запись?');
-            if (answer) {
+            if (confirm('Удалить запись?')) {
                 Axios.delete(this.url + "api/" + this.table + "/" + id).then(function (response) {
-                    _this4.fetchSearch();
-                    _this4.notification = response.data;
+                    _this2.fetchSearch();
                 });
             }
-        },
-        change: function change() {
-            console.log(this.button);
         }
     })
 });
@@ -47843,11 +47811,17 @@ var render = function() {
             [
               _c("option", { attrs: { value: "Все" } }, [_vm._v("0")]),
               _vm._v(" "),
-              _vm._l(_vm.clients, function(client, index) {
+              _vm._l(_vm.allClients, function(client, index) {
                 return _c(
                   "option",
                   { key: index, domProps: { value: client.name } },
-                  [_vm._v(_vm._s(client.id) + "\n                    ")]
+                  [
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(client.id) +
+                        "\n                    "
+                    )
+                  ]
                 )
               })
             ],
@@ -47861,34 +47835,11 @@ var render = function() {
           _c(
             "select",
             {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.anotherTable,
-                  expression: "anotherTable"
-                }
-              ],
               staticClass: "list-group",
               on: {
-                change: [
-                  function($event) {
-                    var $$selectedVal = Array.prototype.filter
-                      .call($event.target.options, function(o) {
-                        return o.selected
-                      })
-                      .map(function(o) {
-                        var val = "_value" in o ? o._value : o.value
-                        return val
-                      })
-                    _vm.anotherTable = $event.target.multiple
-                      ? $$selectedVal
-                      : $$selectedVal[0]
-                  },
-                  function($event) {
-                    _vm.changeTable()
-                  }
-                ]
+                change: function($event) {
+                  _vm.changeTable()
+                }
               }
             },
             [
@@ -47970,9 +47921,7 @@ var render = function() {
           ],
           1
         )
-      ]),
-      _vm._v(" "),
-      _c("h3", [_vm._v(_vm._s(_vm.$store.state.calculated.price))])
+      ])
     ]),
     _vm._v(" "),
     this.table === "cargos"
@@ -48294,7 +48243,9 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(12);
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 //
 //
 //
@@ -48361,54 +48312,34 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
-        return {
-            table: "cargos",
-            post: [],
-            clients: [],
-            url: "http://cargo.site/"
-        };
+        return {};
     },
     created: function created() {
         var _this = this;
 
-        Axios.get(this.url + "api/" + this.table + "/" + this.$route.params.id).then(function (response) {
+        Axios.get(this.$store.state.url + "api/" + this.table + "/" + this.$route.params.id).then(function (response) {
             return response.data;
         }).then(function (response) {
             var data = response.data;
             data.created_at = data.created_at.split("-").reverse().join("-");
-            _this.post = data;
-        });
-        Axios.get(this.url + "api/clients").then(function (response) {
-            return response.data;
-        }).then(function (response) {
-            _this.clients = response.data;
+            _this.ADD_POSTS(data);
         });
     },
 
-    methods: {
+    computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["e" /* mapState */])(['table', 'posts', 'search', 'excel']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */])(['allClients'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["d" /* mapMutations */])(['ADD_POSTS', 'CHANGE_TABLE', 'CHANGE_CLIENT_NAME_TO_ID']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */])(['fetch']), {
         updatePost: function updatePost() {
             var _this2 = this;
 
-            this.changeClientNameToID();
             Axios.patch(this.url + "api/" + this.table + "/" + this.$route.params.id, this.post).then(function () {
                 _this2.$router.push({ name: "Listposts" });
             });
-        },
-        changeClientNameToID: function changeClientNameToID() {
-            var _this3 = this;
-
-            this.clients.forEach(function (element) {
-                if (_this3.post.client_name === element.name) {
-                    _this3.post.client_id = element.id;
-                }
-            });
-        },
-        change: function change() {
-            console.log(this.post);
         }
-    }
+    })
 });
 
 /***/ }),
@@ -48442,19 +48373,19 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.post.created_at,
-                  expression: "post.created_at"
+                  value: _vm.posts.created_at,
+                  expression: "posts.created_at"
                 }
               ],
               staticClass: "form-control",
               attrs: { type: "date" },
-              domProps: { value: _vm.post.created_at },
+              domProps: { value: _vm.posts.created_at },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.post, "created_at", $event.target.value)
+                  _vm.$set(_vm.posts, "created_at", $event.target.value)
                 }
               }
             })
@@ -48470,8 +48401,8 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.post.type,
-                    expression: "post.type"
+                    value: _vm.posts.type,
+                    expression: "posts.type"
                   }
                 ],
                 staticClass: "list-group",
@@ -48486,7 +48417,7 @@ var render = function() {
                         return val
                       })
                     _vm.$set(
-                      _vm.post,
+                      _vm.posts,
                       "type",
                       $event.target.multiple ? $$selectedVal : $$selectedVal[0]
                     )
@@ -48552,19 +48483,19 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.post.price,
-                  expression: "post.price"
+                  value: _vm.posts.price,
+                  expression: "posts.price"
                 }
               ],
               staticClass: "form-control",
               attrs: { type: "text" },
-              domProps: { value: _vm.post.price },
+              domProps: { value: _vm.posts.price },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.post, "price", $event.target.value)
+                  _vm.$set(_vm.posts, "price", $event.target.value)
                 }
               }
             })
@@ -48580,13 +48511,13 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.post.client_name,
-                  expression: "post.client_name"
+                  value: _vm.posts.client_name,
+                  expression: "posts.client_name"
                 }
               ],
               staticClass: "form-control",
               attrs: { list: "client" },
-              domProps: { value: _vm.post.client_name },
+              domProps: { value: _vm.posts.client_name },
               on: {
                 change: function($event) {
                   $event.target.select()
@@ -48598,7 +48529,7 @@ var render = function() {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.post, "client_name", $event.target.value)
+                  _vm.$set(_vm.posts, "client_name", $event.target.value)
                 }
               }
             }),
@@ -48611,7 +48542,7 @@ var render = function() {
                   _vm._v("0")
                 ]),
                 _vm._v(" "),
-                _vm._l(_vm.clients, function(client, index) {
+                _vm._l(_vm.allClients, function(client, index) {
                   return _c(
                     "option",
                     { key: index, domProps: { value: client.name } },
@@ -48631,19 +48562,19 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.post.count_place,
-                  expression: "post.count_place"
+                  value: _vm.posts.count_place,
+                  expression: "posts.count_place"
                 }
               ],
               staticClass: "form-control",
               attrs: { type: "text" },
-              domProps: { value: _vm.post.count_place },
+              domProps: { value: _vm.posts.count_place },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.post, "count_place", $event.target.value)
+                  _vm.$set(_vm.posts, "count_place", $event.target.value)
                 }
               }
             })
@@ -48657,19 +48588,19 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.post.kg,
-                  expression: "post.kg"
+                  value: _vm.posts.kg,
+                  expression: "posts.kg"
                 }
               ],
               staticClass: "form-control",
               attrs: { type: "text" },
-              domProps: { value: _vm.post.kg },
+              domProps: { value: _vm.posts.kg },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.post, "kg", $event.target.value)
+                  _vm.$set(_vm.posts, "kg", $event.target.value)
                 }
               }
             })
@@ -48683,19 +48614,19 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.post.fax_name,
-                  expression: "post.fax_name"
+                  value: _vm.posts.fax_name,
+                  expression: "posts.fax_name"
                 }
               ],
               staticClass: "form-control",
               attrs: { type: "text" },
-              domProps: { value: _vm.post.fax_name },
+              domProps: { value: _vm.posts.fax_name },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.post, "fax_name", $event.target.value)
+                  _vm.$set(_vm.posts, "fax_name", $event.target.value)
                 }
               }
             })
@@ -48711,19 +48642,19 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.post.notation,
-                  expression: "post.notation"
+                  value: _vm.posts.notation,
+                  expression: "posts.notation"
                 }
               ],
               staticClass: "form-control",
               attrs: { type: "text" },
-              domProps: { value: _vm.post.notation },
+              domProps: { value: _vm.posts.notation },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.post, "notation", $event.target.value)
+                  _vm.$set(_vm.posts, "notation", $event.target.value)
                 }
               }
             })
@@ -48743,18 +48674,6 @@ var render = function() {
         )
       ],
       1
-    ),
-    _vm._v(" "),
-    _c(
-      "button",
-      {
-        on: {
-          click: function($event) {
-            _vm.change()
-          }
-        }
-      },
-      [_vm._v("Show")]
     )
   ])
 }
