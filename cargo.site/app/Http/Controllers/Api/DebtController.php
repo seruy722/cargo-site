@@ -95,7 +95,13 @@ class DebtController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $post = Debt::find($id);
+        if ($post) {
+            $post->update($request->all());
+            return response()->json(['status' => 'success', 'msg' => 'Запись успешно обновлена']);
+        } else {
+            return response()->json(['status' => 'error', 'msg' => 'Ошибка при обновлении записи']);
+        }
     }
 
     /**
@@ -107,7 +113,7 @@ class DebtController extends Controller
     public function destroy($id)
     {
         $post = Debt::find($id);
-        if($post->count()){
+        if($post){
             $post->delete();
             return response()->json(['status'=>'success','msg'=>'Запись успешно удалена']);
         }else{

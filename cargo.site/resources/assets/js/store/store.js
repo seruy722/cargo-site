@@ -8,7 +8,7 @@ const state = {
     posts: [],
     clients: [],
     url: "http://cargo.site/",
-    notification:'',
+    notification: '',
     search: {
         typeTable: null,
         client: null,
@@ -31,19 +31,28 @@ const state = {
 };
 const getters = {
     totalPrice: state => {
-        return state.posts.reduce((result, num) => result + num.price, 0);
+        if (Array.isArray(state.posts)) {
+            let price = state.posts.reduce((result, num) => result + num.price, 0);
+            return price ? price : 0;
+        }
     },
     totalPlace: state => {
-        let countPlace = state.posts.reduce((result, num) => result + num.count_place, 0);
-        return countPlace ? countPlace : 0;
+        if (Array.isArray(state.posts)) {
+            let countPlace = state.posts.reduce((result, num) => result + num.count_place, 0);
+            return countPlace ? countPlace : 0;
+        }
     },
     totalKg: state => {
-        let kg = state.posts.reduce((result, num) => result + num.kg, 0);
-        return kg ? kg : 0;
+        if (Array.isArray(state.posts)) {
+            let kg = state.posts.reduce((result, num) => result + num.kg, 0);
+            return kg ? kg : 0;
+        }
     },
     totalCommission: state => {
-        let commission = state.posts.reduce((result, num) => result + num.commission, 0);
-        return commission ? commission : 0;
+        if (Array.isArray(state.posts)) {
+            let commission = state.posts.reduce((result, num) => result + num.commission, 0);
+            return commission ? commission : 0;
+        }
     },
     allClients: state => {
         return state.clients;
@@ -68,6 +77,9 @@ const mutations = {
                 state.search.clientID = element.id;
             }
         });
+    },
+    CHANGE_NOTIFICATION: (state, message) => {
+        state.notification = message;
     },
     PREPARE_DATA_TO_EXCEL: (state) => {
         if (state.table === "cargos") {
@@ -96,9 +108,9 @@ const mutations = {
 };
 
 const actions = {
-    fetch: (context) => {
+    fetch: context => {
         context.commit('CHANGE_CLIENT_NAME_TO_ID');
-        Axios.post(state.url + "api/search/" + state.table, {
+        Axios.post(`${state.url}api/search/${state.table}`, {
             keyword: state.search.clientID,
             dateStart: state.search.dateStart,
             dateLast: state.search.dateLast,
@@ -106,8 +118,21 @@ const actions = {
             typeTable: state.search.typeTable
         }).then(response => response.data).then(response => {
             context.commit('ADD_POSTS', response.data);
+            context.commit('PREPARE_DATA_TO_EXCEL');
         });
-        context.commit('PREPARE_DATA_TO_EXCEL');
+
+    },
+    destroy: (context, id) => {
+        if (confirm('Удалить запись?')) {
+            Axios.delete(`${state.url}api/${state.table}/${id}`).then(response => {
+                context.commit('CHANGE_NOTIFICATION', response.data.msg);
+            });
+        }
+    },
+    update: (context, id) => {
+        Axios.patch(`${state.url}api/${state.table}/${id}`, state.posts).then(response => {
+            context.commit('CHANGE_NOTIFICATION', response.data.msg);
+        });
     }
 };
 export const store = new Vuex.Store({

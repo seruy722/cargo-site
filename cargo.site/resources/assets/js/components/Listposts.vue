@@ -22,7 +22,7 @@
                     <span class="glyphicon glyphicon-th-list"></span>
                     <select class="list-group" @change="changeTable()">
                         <option value="cargos">КАРГО</option>
-                        <option value="debts">ДОЛГИ</option>
+                        <option value="debts" v-bind:selected="table==='debts'">ДОЛГИ</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -46,6 +46,7 @@
                 </div>
             </div>
         </div>
+        <div>{{notification}}</div>
         <div v-if="this.table==='cargos'">
             <div v-if="this.posts.length">
                 <span>Сумма: {{totalPrice}}</span>|
@@ -69,7 +70,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="(post, i) in posts" :key="post.id"
-                    v-bind:class="{'danger':post.type=='Долг','success':post.type=='Оплата'}">
+                    v-bind:class="{'danger':post.type==='Долг','success':post.type==='Оплата'}">
                     <td>{{i + 1}}</td>
                     <td v-for="(element,index) in post" :key="element.id" v-if="index!='id'">{{element}}</td>
                     <td>
@@ -129,25 +130,23 @@
     import {mapActions, mapGetters, mapMutations, mapState} from 'vuex';
 
     export default {
-        data() {
-            return {
-
-            };
-        },
         created() {
-            Axios.get(this.$store.state.url + "api/" + this.table).then(response => response.data).then(response => {
-                this.ADD_POSTS(response.data);
-            });
-            Axios.get(this.$store.state.url + "api/clients").then(response => response.data).then(response => {
+            this.fetchSearch();
+            Axios.get(`${this.$store.state.url}api/clients`).then(response => response.data).then(response => {
                 this.ADD_CLIENTS(response.data);
             });
+        },
+        watch: {
+            // call again the method if the route changes
+            '$route': 'fetchSearch'
         },
         computed: {
             ...mapState([
                 'table',
                 'posts',
                 'search',
-                'excel'
+                'excel',
+                'notification'
             ]),
             ...mapGetters([
                 'totalPrice',
@@ -161,13 +160,11 @@
             ...mapMutations([
                 'ADD_POSTS',
                 'ADD_CLIENTS',
-                'CHANGE_TABLE',
-                'TOTAL_CALCULATED',
-                'CHANGE_CLIENT_NAME_TO_ID',
-                'PREPARE_DATA_TO_EXCEL'
+                'CHANGE_TABLE'
             ]),
             ...mapActions([
-                'fetch'
+                'fetch',
+                'destroy'
             ]),
             changeTable() {
                 this.CHANGE_TABLE();
@@ -177,11 +174,8 @@
                 this.fetch();
             },
             desroyEntry(id) {
-                if (confirm('Удалить запись?')) {
-                    Axios.delete(this.url + "api/" + this.table + "/" + id).then(response => {
-                        this.fetchSearch();
-                    });
-                }
+                this.destroy(id);
+                this.fetchSearch();
             }
         }
     };

@@ -1,6 +1,7 @@
 <template id="post-edit">
     <div class="row">
         <h3>Редактирование записи</h3>
+        <div> {{notification}} </div>
         <form v-on:submit.prevent="updatePost">
             <div class="form-row">
                 <div class="col-md-3 form-group">
@@ -58,7 +59,7 @@
                 </div>
             </div>
             <button type="submit" class="btn btn-success">Сохранить</button>
-            <router-link class="btn btn-warning" v-bind:to="'/'">Отмена</router-link>
+            <router-link class="btn btn-warning" v-bind:to="{name:'Listposts'}">Отмена</router-link>
         </form>
     </div>
 </template>
@@ -84,7 +85,8 @@
                 'table',
                 'posts',
                 'search',
-                'excel'
+                'excel',
+                'notification'
             ]),
             ...mapGetters([
                 'allClients'
@@ -93,16 +95,15 @@
         methods: {
             ...mapMutations([
                 'ADD_POSTS',
-                'CHANGE_TABLE',
-                'CHANGE_CLIENT_NAME_TO_ID'
+                'CHANGE_TABLE'
             ]),
             ...mapActions([
-                'fetch'
+                'fetch',
+                'update'
             ]),
             updatePost() {
-                Axios.patch(this.url + "api/" + this.table + "/" + this.$route.params.id, this.post).then(() => {
-                    this.$router.push({name: "Listposts"});
-                });
+                this.update(this.$route.params.id);
+                this.$router.push({name: "Listposts"});
             }
         }
     };

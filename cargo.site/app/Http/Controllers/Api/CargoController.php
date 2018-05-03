@@ -24,7 +24,6 @@ class CargoController extends Controller
     {
         $key = $request->keyword;
         $type = $request->typeTable;
-//        dd($type);
         if ($request->dateStart) {
             $dateStart = date('Y-m-d', strtotime($request->dateStart));
         } else {
@@ -91,12 +90,22 @@ class CargoController extends Controller
     public function update(Request $request, $id)
     {
         $post = Cargo::find($id);
-        if ($post->count()) {
-            $post->update($request->all());
+        $data = $request->all();
+        if ($post) {
+            if ($data['type'] === 'Долг' && $this->sign($data['price']) >= 0) {
+                $data['price'] = ($data['price'] * -1);
+            } else if($data['type'] === 'Оплата' && $this->sign($data['price']) <= 0){
+                $data['price'] = ($data['price'] * -1);
+            }
+            $post->update($data);
             return response()->json(['status' => 'success', 'msg' => 'Запись успешно обновлена']);
         } else {
             return response()->json(['status' => 'error', 'msg' => 'Ошибка при обновлении записи']);
         }
+    }
+
+    public function sign( $number ) {
+        return ( $number > 0 ) ? 1 : ( ( $number < 0 ) ? -1 : 0 );
     }
 
     /**
@@ -108,7 +117,7 @@ class CargoController extends Controller
     public function destroy($id)
     {
         $post = Cargo::find($id);
-        if ($post->count()) {
+        if ($post) {
             $post->delete();
             return response()->json(['status' => 'success', 'msg' => 'Запись успешно удалена']);
         } else {

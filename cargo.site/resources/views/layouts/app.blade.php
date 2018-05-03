@@ -12,6 +12,11 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <style>
+        .table{
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 <div id="a">
