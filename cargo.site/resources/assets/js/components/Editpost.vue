@@ -1,7 +1,7 @@
 <template id="post-edit">
     <div class="row">
         <h3>Редактирование записи</h3>
-        <div> {{notification}} </div>
+        <div> {{notification}}</div>
         <form v-on:submit.prevent="updatePost">
             <div class="form-row">
                 <div class="col-md-3 form-group">
@@ -10,7 +10,7 @@
                 </div>
                 <div class="col-md-3 form-group">
                     <label class="col-form-label">Тип</label>
-                    <select class="list-group" v-model="posts.type">
+                    <select class="form-control" v-model="posts.type">
                         <option>Все</option>
                         <option value="Оплата">ОПЛАТА</option>
                         <option value="Долг">ДОЛГ</option>
@@ -18,9 +18,9 @@
                 </div>
                 <div class="col-md-3 form-group">
                     <label for="">Таблица</label>
-                    <select class="form-control" v-model="table">
+                    <select class="form-control" @change="CHANGE_TABLE">
                         <option value="cargos">КАРГО</option>
-                        <option value="debts">ДОЛГИ</option>
+                        <option value="debts" v-bind:selected="table==='debts'">ДОЛГИ</option>
                     </select>
                 </div>
                 <div class="col-md-3 form-group">
@@ -35,7 +35,8 @@
                            @click="$event.target.select()" class="form-control">
                     <datalist id="client">
                         <option value="Все" selected>0</option>
-                        <option v-for="(client,index) in allClients" :key="index" v-bind:value="client.name">{{client.id}}
+                        <option v-for="(client,index) in allClients" :key="index" v-bind:value="client.name">
+                            {{client.id}}
                         </option>
                     </datalist>
                 </div>
@@ -65,13 +66,11 @@
 </template>
 
 <script>
-    import {mapState,mapActions,mapGetters,mapMutations} from 'vuex';
+    import {mapActions, mapGetters, mapMutations, mapState} from 'vuex';
 
     export default {
         data() {
-            return {
-
-            };
+            return {};
         },
         created() {
             Axios.get(this.$store.state.url + "api/" + this.table + "/" + this.$route.params.id).then(response => response.data).then(response => {
@@ -84,8 +83,6 @@
             ...mapState([
                 'table',
                 'posts',
-                'search',
-                'excel',
                 'notification'
             ]),
             ...mapGetters([
@@ -98,7 +95,6 @@
                 'CHANGE_TABLE'
             ]),
             ...mapActions([
-                'fetch',
                 'update'
             ]),
             updatePost() {

@@ -47,6 +47,7 @@
             </div>
         </div>
         <div>{{notification}}</div>
+        <button @click="change()">Click</button>
         <div v-if="this.table==='cargos'">
             <div v-if="this.posts.length">
                 <span>Сумма: {{totalPrice}}</span>|
@@ -136,10 +137,6 @@
                 this.ADD_CLIENTS(response.data);
             });
         },
-        watch: {
-            // call again the method if the route changes
-            '$route': 'fetchSearch'
-        },
         computed: {
             ...mapState([
                 'table',
@@ -153,7 +150,8 @@
                 'totalPlace',
                 'totalKg',
                 'totalCommission',
-                'allClients'
+                'allClients',
+                'nameOfTable'
             ])
         },
         methods: {
@@ -176,6 +174,9 @@
             desroyEntry(id) {
                 this.destroy(id);
                 this.fetchSearch();
+            },
+            change() {
+                console.log(this.nameOfTable);
             }
         }
     };

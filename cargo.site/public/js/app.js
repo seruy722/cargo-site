@@ -47295,38 +47295,41 @@ var state = {
 var getters = {
     totalPrice: function totalPrice(state) {
         if (Array.isArray(state.posts)) {
-            var price = state.posts.reduce(function (result, num) {
-                return result + num.price;
+            var price = state.posts.reduce(function (result, element) {
+                return result + element.price;
             }, 0);
             return price ? price : 0;
         }
     },
     totalPlace: function totalPlace(state) {
         if (Array.isArray(state.posts)) {
-            var countPlace = state.posts.reduce(function (result, num) {
-                return result + num.count_place;
+            var countPlace = state.posts.reduce(function (result, element) {
+                return result + element.count_place;
             }, 0);
             return countPlace ? countPlace : 0;
         }
     },
     totalKg: function totalKg(state) {
         if (Array.isArray(state.posts)) {
-            var kg = state.posts.reduce(function (result, num) {
-                return result + num.kg;
+            var kg = state.posts.reduce(function (result, element) {
+                return result + element.kg;
             }, 0);
             return kg ? kg : 0;
         }
     },
     totalCommission: function totalCommission(state) {
         if (Array.isArray(state.posts)) {
-            var commission = state.posts.reduce(function (result, num) {
-                return result + num.commission;
+            var commission = state.posts.reduce(function (result, element) {
+                return result + element.commission;
             }, 0);
             return commission ? commission : 0;
         }
     },
     allClients: function allClients(state) {
         return state.clients;
+    },
+    nameOfTable: function nameOfTable(state) {
+        return state.table;
     }
 };
 var mutations = {
@@ -47692,6 +47695,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -47707,11 +47711,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         });
     },
 
-    watch: {
-        // call again the method if the route changes
-        '$route': 'fetchSearch'
-    },
-    computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["e" /* mapState */])(['table', 'posts', 'search', 'excel', 'notification']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */])(['totalPrice', 'totalPlace', 'totalKg', 'totalCommission', 'allClients'])),
+    computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["e" /* mapState */])(['table', 'posts', 'search', 'excel', 'notification']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */])(['totalPrice', 'totalPlace', 'totalKg', 'totalCommission', 'allClients', 'nameOfTable'])),
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["d" /* mapMutations */])(['ADD_POSTS', 'ADD_CLIENTS', 'CHANGE_TABLE']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */])(['fetch', 'destroy']), {
         changeTable: function changeTable() {
             this.CHANGE_TABLE();
@@ -47723,6 +47723,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         desroyEntry: function desroyEntry(id) {
             this.destroy(id);
             this.fetchSearch();
+        },
+        change: function change() {
+            console.log(this.nameOfTable);
         }
     })
 });
@@ -47948,6 +47951,18 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", [_vm._v(_vm._s(_vm.notification))]),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        on: {
+          click: function($event) {
+            _vm.change()
+          }
+        }
+      },
+      [_vm._v("Click")]
+    ),
     _vm._v(" "),
     this.table === "cargos"
       ? _c("div", [
@@ -48337,6 +48352,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -48356,8 +48372,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         });
     },
 
-    computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["e" /* mapState */])(['table', 'posts', 'search', 'excel', 'notification']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */])(['allClients'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["d" /* mapMutations */])(['ADD_POSTS', 'CHANGE_TABLE']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */])(['fetch', 'update']), {
+    computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["e" /* mapState */])(['table', 'posts', 'notification']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */])(['allClients'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["d" /* mapMutations */])(['ADD_POSTS', 'CHANGE_TABLE']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */])(['update']), {
         updatePost: function updatePost() {
             this.update(this.$route.params.id);
             this.$router.push({ name: "Listposts" });
@@ -48376,7 +48392,7 @@ var render = function() {
   return _c("div", { staticClass: "row" }, [
     _c("h3", [_vm._v("Редактирование записи")]),
     _vm._v(" "),
-    _c("div", [_vm._v(" " + _vm._s(_vm.notification) + " ")]),
+    _c("div", [_vm._v(" " + _vm._s(_vm.notification))]),
     _vm._v(" "),
     _c(
       "form",
@@ -48430,7 +48446,7 @@ var render = function() {
                     expression: "posts.type"
                   }
                 ],
-                staticClass: "list-group",
+                staticClass: "form-control",
                 on: {
                   change: function($event) {
                     var $$selectedVal = Array.prototype.filter
@@ -48466,36 +48482,18 @@ var render = function() {
             _vm._v(" "),
             _c(
               "select",
-              {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.table,
-                    expression: "table"
-                  }
-                ],
-                staticClass: "form-control",
-                on: {
-                  change: function($event) {
-                    var $$selectedVal = Array.prototype.filter
-                      .call($event.target.options, function(o) {
-                        return o.selected
-                      })
-                      .map(function(o) {
-                        var val = "_value" in o ? o._value : o.value
-                        return val
-                      })
-                    _vm.table = $event.target.multiple
-                      ? $$selectedVal
-                      : $$selectedVal[0]
-                  }
-                }
-              },
+              { staticClass: "form-control", on: { change: _vm.CHANGE_TABLE } },
               [
                 _c("option", { attrs: { value: "cargos" } }, [_vm._v("КАРГО")]),
                 _vm._v(" "),
-                _c("option", { attrs: { value: "debts" } }, [_vm._v("ДОЛГИ")])
+                _c(
+                  "option",
+                  {
+                    attrs: { value: "debts" },
+                    domProps: { selected: _vm.table === "debts" }
+                  },
+                  [_vm._v("ДОЛГИ")]
+                )
               ]
             )
           ]),
@@ -48571,7 +48569,13 @@ var render = function() {
                   return _c(
                     "option",
                     { key: index, domProps: { value: client.name } },
-                    [_vm._v(_vm._s(client.id) + "\n                    ")]
+                    [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(client.id) +
+                          "\n                    "
+                      )
+                    ]
                   )
                 })
               ],

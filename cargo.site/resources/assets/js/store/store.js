@@ -32,30 +32,33 @@ const state = {
 const getters = {
     totalPrice: state => {
         if (Array.isArray(state.posts)) {
-            let price = state.posts.reduce((result, num) => result + num.price, 0);
+            let price = state.posts.reduce((result, element) => result + element.price, 0);
             return price ? price : 0;
         }
     },
     totalPlace: state => {
         if (Array.isArray(state.posts)) {
-            let countPlace = state.posts.reduce((result, num) => result + num.count_place, 0);
+            let countPlace = state.posts.reduce((result, element) => result + element.count_place, 0);
             return countPlace ? countPlace : 0;
         }
     },
     totalKg: state => {
         if (Array.isArray(state.posts)) {
-            let kg = state.posts.reduce((result, num) => result + num.kg, 0);
+            let kg = state.posts.reduce((result, element) => result + element.kg, 0);
             return kg ? kg : 0;
         }
     },
     totalCommission: state => {
         if (Array.isArray(state.posts)) {
-            let commission = state.posts.reduce((result, num) => result + num.commission, 0);
+            let commission = state.posts.reduce((result, element) => result + element.commission, 0);
             return commission ? commission : 0;
         }
     },
     allClients: state => {
         return state.clients;
+    },
+    nameOfTable: state => {
+        return state.table;
     }
 };
 const mutations = {

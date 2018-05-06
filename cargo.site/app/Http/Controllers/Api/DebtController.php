@@ -96,12 +96,22 @@ class DebtController extends Controller
     public function update(Request $request, $id)
     {
         $post = Debt::find($id);
+        $data = $request->all();
         if ($post) {
-            $post->update($request->all());
+            if ($data['type'] === 'Долг' && $this->sign($data['price']) >= 0) {
+                $data['price'] = ($data['price'] * -1);
+            } else if($data['type'] === 'Оплата' && $this->sign($data['price']) <= 0){
+                $data['price'] = ($data['price'] * -1);
+            }
+            $post->update($data);
             return response()->json(['status' => 'success', 'msg' => 'Запись успешно обновлена']);
         } else {
             return response()->json(['status' => 'error', 'msg' => 'Ошибка при обновлении записи']);
         }
+    }
+
+    public function sign( $number ) {
+        return ( $number > 0 ) ? 1 : ( ( $number < 0 ) ? -1 : 0 );
     }
 
     /**
