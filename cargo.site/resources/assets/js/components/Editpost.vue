@@ -69,9 +69,6 @@
     import {mapActions, mapGetters, mapMutations, mapState} from 'vuex';
 
     export default {
-        data() {
-            return {};
-        },
         created() {
             Axios.get(this.$store.state.url + "api/" + this.table + "/" + this.$route.params.id).then(response => response.data).then(response => {
                 let data = response.data;

@@ -4,8 +4,8 @@
             <div class="row">
                 <div class="col-md-4">
                     <span class="glyphicon glyphicon-calendar"></span>
-                    <input type="date" @change="fetchSearch()" v-model="search.dateStart">
-                    <input type="date" @change="fetchSearch()" v-model="search.dateLast">
+                    <input type="date" @change="fetchSearch" v-model="search.dateStart">
+                    <input type="date" @change="fetchSearch" v-model="search.dateLast">
                 </div>
                 <div class="col-md-3">
                     <span class="glyphicon glyphicon-user"></span>
@@ -20,14 +20,14 @@
                 </div>
                 <div class="col-md-2">
                     <span class="glyphicon glyphicon-th-list"></span>
-                    <select class="list-group" @change="changeTable()">
+                    <select class="list-group" @change="changeTable">
                         <option value="cargos">КАРГО</option>
                         <option value="debts" v-bind:selected="table==='debts'">ДОЛГИ</option>
                     </select>
                 </div>
                 <div class="col-md-2">
                     <span class="glyphicon glyphicon-th-list"></span>
-                    <select class="list-group" v-model="search.typeTable" @change="fetchSearch()">
+                    <select class="list-group" v-model="search.typeTable" @change="fetchSearch">
                         <option v-bind:value="null">Все</option>
                         <option value="Оплата">ОПЛАТА</option>
                         <option value="Долг">ДОЛГ</option>
@@ -47,7 +47,45 @@
             </div>
         </div>
         <div>{{notification}}</div>
-        <button @click="change()">Click</button>
+        <button @click="change">Click</button>
+        <div>
+            <div class="row">
+                <div class="col-xs-2">
+                    <button type="button" @click="addNewPost" class="btn btn-block btn-success">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Добавить
+                    </button>
+                </div>
+            </div>
+            <div v-for="(post,index) in posty">
+                <div class="row">
+                    <div class="col-xs-2">
+                        <label>&nbsp;</label>
+                        <button type="button" @click="removePost(index)" class="btn btn-block btn-danger">
+                            <span class="glyphicon glyphicon-minus"></span>
+                            Удалить
+                        </button>
+                    </div>
+                    <div class="form-group col-xs-5">
+                        <label>Price (HUF)</label>
+                        <input v-model="post.price" type="number"
+                               name="posty[][price]" class="form-control" placeholder="Price">
+                    </div>
+                    <div class="form-group col-xs-5">
+                        <label>Rooms (PCS)</label>
+                        <input v-model="post.kg" type="number"
+                               name="" class="form-control" placeholder="Rooms">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2">
+                    <button type="submit" class="btn btn-block btn-primary">
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
         <div v-if="this.table==='cargos'">
             <div v-if="this.posts.length">
                 <span>Сумма: {{totalPrice}}</span>|
@@ -131,6 +169,21 @@
     import {mapActions, mapGetters, mapMutations, mapState} from 'vuex';
 
     export default {
+        data() {
+            return {
+                post: {
+                    created_at: '',
+                    type: '',
+                    price: '',
+                    client_id: '',
+                    count_place: '',
+                    kg: '',
+                    fax: '',
+                    notation: ''
+                },
+                posty: []
+            }
+        },
         created() {
             this.fetchSearch();
             Axios.get(`${this.$store.state.url}api/clients`).then(response => response.data).then(response => {
@@ -150,13 +203,11 @@
                 'totalPlace',
                 'totalKg',
                 'totalCommission',
-                'allClients',
-                'nameOfTable'
+                'allClients'
             ])
         },
         methods: {
             ...mapMutations([
-                'ADD_POSTS',
                 'ADD_CLIENTS',
                 'CHANGE_TABLE'
             ]),
@@ -175,8 +226,14 @@
                 this.destroy(id);
                 this.fetchSearch();
             },
+            addNewPost() {
+               this.posty.push(Vue.util.extend({}, this.post));
+            },
+            removePost(index){
+                this.posty.splice(index,1);
+            },
             change() {
-                console.log(this.nameOfTable);
+                console.log(this.posty);
             }
         }
     };

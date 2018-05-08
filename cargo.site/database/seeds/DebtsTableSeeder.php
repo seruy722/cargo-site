@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Debt;
+use Illuminate\Database\Seeder;
+
 class DebtsTableSeeder extends Seeder
 {
     /**
@@ -17,10 +18,19 @@ class DebtsTableSeeder extends Seeder
         $faker = Faker\Factory::create();
         for ($i = 0; $i < 50; $i++) {
             Debt::create([
-                'type' => $faker->randomElement($array = ['Оплата', 'Долг']),
+                'type' => 'Оплата',
                 'price' => $faker->randomNumber(3),
                 'client_id' => rand(1, 50),
-                'commission'=>$faker->randomNumber(2),
+                'commission' => $faker->randomNumber(2),
+                'notation' => $faker->word
+            ]);
+        }
+        for ($i = 0; $i < 50; $i++) {
+            Debt::create([
+                'type' => 'Долг',
+                'price' => $faker->randomNumber(3) * -1,
+                'client_id' => rand(1, 50),
+                'commission' => $faker->randomNumber(2),
                 'notation' => $faker->word
             ]);
         }

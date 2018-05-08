@@ -47272,6 +47272,7 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex
 
 var state = {
     table: "cargos",
+    beforeChangedTable: "cargos",
     posts: [],
     clients: [],
     url: "http://cargo.site/",
@@ -47327,9 +47328,6 @@ var getters = {
     },
     allClients: function allClients(state) {
         return state.clients;
-    },
-    nameOfTable: function nameOfTable(state) {
-        return state.table;
     }
 };
 var mutations = {
@@ -47340,6 +47338,7 @@ var mutations = {
         state.clients = clients;
     },
     CHANGE_TABLE: function CHANGE_TABLE(state) {
+        state.beforeChangedTable = state.table;
         state.table === 'cargos' ? state.table = 'debts' : state.table = 'cargos';
     },
     CHANGE_CLIENT_NAME_TO_ID: function CHANGE_CLIENT_NAME_TO_ID(state) {
@@ -47696,10 +47695,63 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            post: {
+                created_at: '',
+                type: '',
+                price: '',
+                client_id: '',
+                count_place: '',
+                kg: '',
+                fax: '',
+                notation: ''
+            },
+            posty: []
+        };
+    },
     created: function created() {
         var _this = this;
 
@@ -47711,8 +47763,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         });
     },
 
-    computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["e" /* mapState */])(['table', 'posts', 'search', 'excel', 'notification']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */])(['totalPrice', 'totalPlace', 'totalKg', 'totalCommission', 'allClients', 'nameOfTable'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["d" /* mapMutations */])(['ADD_POSTS', 'ADD_CLIENTS', 'CHANGE_TABLE']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */])(['fetch', 'destroy']), {
+    computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["e" /* mapState */])(['table', 'posts', 'search', 'excel', 'notification']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapGetters */])(['totalPrice', 'totalPlace', 'totalKg', 'totalCommission', 'allClients'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["d" /* mapMutations */])(['ADD_CLIENTS', 'CHANGE_TABLE']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapActions */])(['fetch', 'destroy']), {
         changeTable: function changeTable() {
             this.CHANGE_TABLE();
             this.fetchSearch();
@@ -47724,8 +47776,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.destroy(id);
             this.fetchSearch();
         },
+        addNewPost: function addNewPost() {
+            this.posty.push(Vue.util.extend({}, this.post));
+        },
+        removePost: function removePost(index) {
+            this.posty.splice(index, 1);
+        },
         change: function change() {
-            console.log(this.nameOfTable);
+            console.log(this.posty);
         }
     })
 });
@@ -47756,9 +47814,7 @@ var render = function() {
             attrs: { type: "date" },
             domProps: { value: _vm.search.dateStart },
             on: {
-              change: function($event) {
-                _vm.fetchSearch()
-              },
+              change: _vm.fetchSearch,
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -47780,9 +47836,7 @@ var render = function() {
             attrs: { type: "date" },
             domProps: { value: _vm.search.dateLast },
             on: {
-              change: function($event) {
-                _vm.fetchSearch()
-              },
+              change: _vm.fetchSearch,
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -47853,14 +47907,7 @@ var render = function() {
           _vm._v(" "),
           _c(
             "select",
-            {
-              staticClass: "list-group",
-              on: {
-                change: function($event) {
-                  _vm.changeTable()
-                }
-              }
-            },
+            { staticClass: "list-group", on: { change: _vm.changeTable } },
             [
               _c("option", { attrs: { value: "cargos" } }, [_vm._v("КАРГО")]),
               _vm._v(" "),
@@ -47908,9 +47955,7 @@ var render = function() {
                       $event.target.multiple ? $$selectedVal : $$selectedVal[0]
                     )
                   },
-                  function($event) {
-                    _vm.fetchSearch()
-                  }
+                  _vm.fetchSearch
                 ]
               }
             },
@@ -47952,16 +47997,116 @@ var render = function() {
     _vm._v(" "),
     _c("div", [_vm._v(_vm._s(_vm.notification))]),
     _vm._v(" "),
+    _c("button", { on: { click: _vm.change } }, [_vm._v("Click")]),
+    _vm._v(" "),
     _c(
-      "button",
-      {
-        on: {
-          click: function($event) {
-            _vm.change()
-          }
-        }
-      },
-      [_vm._v("Click")]
+      "div",
+      [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-xs-2" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-block btn-success",
+                attrs: { type: "button" },
+                on: { click: _vm.addNewPost }
+              },
+              [
+                _c("span", { staticClass: "glyphicon glyphicon-plus" }),
+                _vm._v("\n                    Добавить\n                ")
+              ]
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _vm._l(_vm.posty, function(post, index) {
+          return _c("div", [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-xs-2" }, [
+                _c("label", [_vm._v(" ")]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-block btn-danger",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        _vm.removePost(index)
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { staticClass: "glyphicon glyphicon-minus" }),
+                    _vm._v(
+                      "\n                        Удалить\n                    "
+                    )
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-xs-5" }, [
+                _c("label", [_vm._v("Price (HUF)")]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: post.price,
+                      expression: "post.price"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "number",
+                    name: "posty[][price]",
+                    placeholder: "Price"
+                  },
+                  domProps: { value: post.price },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(post, "price", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-xs-5" }, [
+                _c("label", [_vm._v("Rooms (PCS)")]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: post.kg,
+                      expression: "post.kg"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "number", name: "", placeholder: "Rooms" },
+                  domProps: { value: post.kg },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(post, "kg", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ])
+          ])
+        }),
+        _vm._v(" "),
+        _vm._m(0)
+      ],
+      2
     ),
     _vm._v(" "),
     this.table === "cargos"
@@ -47977,7 +48122,7 @@ var render = function() {
             : _vm._e(),
           _vm._v(" "),
           _c("table", { staticClass: "table table-bordered" }, [
-            _vm._m(0),
+            _vm._m(1),
             _vm._v(" "),
             _c(
               "tbody",
@@ -48047,7 +48192,7 @@ var render = function() {
             : _vm._e(),
           _vm._v(" "),
           _c("table", { staticClass: "table table-bordered" }, [
-            _vm._m(1),
+            _vm._m(2),
             _vm._v(" "),
             _c(
               "tbody",
@@ -48108,6 +48253,23 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-xs-2" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-block btn-primary",
+            attrs: { type: "submit" }
+          },
+          [_vm._v("\n                    Сохранить\n                ")]
+        )
+      ])
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -48357,9 +48519,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {};
-    },
     created: function created() {
         var _this = this;
 

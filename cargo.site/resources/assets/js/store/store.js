@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 const state = {
     table: "cargos",
+    beforeChangedTable:"cargos",
     posts: [],
     clients: [],
     url: "http://cargo.site/",
@@ -56,9 +57,6 @@ const getters = {
     },
     allClients: state => {
         return state.clients;
-    },
-    nameOfTable: state => {
-        return state.table;
     }
 };
 const mutations = {
@@ -69,6 +67,7 @@ const mutations = {
         state.clients = clients;
     },
     CHANGE_TABLE: state => {
+        state.beforeChangedTable = state.table;
         state.table === 'cargos' ? state.table = 'debts' : state.table = 'cargos';
     },
     CHANGE_CLIENT_NAME_TO_ID: (state) => {
